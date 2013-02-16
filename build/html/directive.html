@@ -1,0 +1,834 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Directives
+&#64;description</p>
+<p>Directives are a way to teach HTML new tricks. During DOM compilation directives are matched
+against the HTML and executed. This allows directives to register behavior, or transform the DOM.</p>
+<p>Angular comes with a built in set of directives which are useful for building web applications but
+can be extended such that HTML can be turned into a declarative domain specific language (DSL).</p>
+<p># Invoking directives from HTML</p>
+<p>Directives have camel cased names such as <cite>ngBind</cite>. The directive can be invoked by translating
+the camel case name into snake case with these special characters <cite>:</cite>, <cite>-</cite>, or <cite>_</cite>. Optionally the
+directive can be prefixed with <cite>x-</cite>, or <cite>data-</cite> to make it HTML validator compliant. Here is a
+list of some of the possible directive names: <cite>ng:bind</cite>, <cite>ng-bind</cite>, <cite>ng_bind</cite>, <cite>x-ng-bind</cite> and
+<cite>data-ng-bind</cite>.</p>
+<p>The directives can be placed in element names, attributes, class names, as well as comments. Here
+are some equivalent examples of invoking <cite>myDir</cite>. (However, most directives are restricted to
+attribute only.)</p>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd>&lt;span my-dir=&#8221;exp&#8221;&gt;&lt;/span&gt;
+&lt;span class=&#8221;my-dir: exp;&#8221;&gt;&lt;/span&gt;
+&lt;my-dir&gt;&lt;/my-dir&gt;
+&lt;!&#8211; directive: my-dir exp &#8211;&gt;</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>Directives can be invoked in many different ways, but are equivalent in the end result as shown in
+the following example.</p>
+<dl class="docutils">
+<dt>&lt;doc:example&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;doc:source &gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;script&gt;</dt>
+<dd><dl class="first docutils">
+<dt>function Ctrl1($scope) {</dt>
+<dd>$scope.name = &#8216;angular&#8217;;</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>&lt;/script&gt;
+&lt;div ng-controller=&#8221;Ctrl1&#8221;&gt;</p>
+<blockquote>
+<div>Hello &lt;input ng-model=&#8217;name&#8217;&gt; &lt;hr/&gt;
+&amp;ltspan ng:bind=&#8221;name&#8221;&amp;gt &lt;span ng:bind=&#8221;name&#8221;&gt;&lt;/span&gt; &lt;br/&gt;
+&amp;ltspan ng_bind=&#8221;name&#8221;&amp;gt &lt;span ng_bind=&#8221;name&#8221;&gt;&lt;/span&gt; &lt;br/&gt;
+&amp;ltspan ng-bind=&#8221;name&#8221;&amp;gt &lt;span ng-bind=&#8221;name&#8221;&gt;&lt;/span&gt; &lt;br/&gt;
+&amp;ltspan data-ng-bind=&#8221;name&#8221;&amp;gt &lt;span data-ng-bind=&#8221;name&#8221;&gt;&lt;/span&gt; &lt;br/&gt;
+&amp;ltspan x-ng-bind=&#8221;name&#8221;&amp;gt &lt;span x-ng-bind=&#8221;name&#8221;&gt;&lt;/span&gt; &lt;br/&gt;</div></blockquote>
+<p class="last">&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>&lt;/doc:source&gt;
+&lt;doc:scenario&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>it(&#8216;should show off bindings&#8217;, function() {</dt>
+<dd>expect(element(&#8216;div[ng-controller=&#8221;Ctrl1&#8221;] span[ng-bind]&#8217;).text()).toBe(&#8216;angular&#8217;);</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p class="last">&lt;/doc:scenario&gt;</p>
+</dd>
+</dl>
+<p>&lt;/doc:example&gt;</p>
+<p># String interpolation</p>
+<p>During the compilation process the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$compile compiler} matches text and
+attributes using the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$interpolate $interpolate} service to see if they
+contain embedded expressions. These expressions are registered as <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.$rootScope.Scope#$watch watches} and will update as part of normal <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.$rootScope.Scope#$digest digest} cycle. An example of interpolation is shown
+here:</p>
+<p>&lt;pre&gt;
+&lt;a href=&#8221;img/{{username}}.jpg&#8221;&gt;Hello {{username}}!&lt;/a&gt;
+&lt;/pre&gt;</p>
+<p># Compilation process, and directive matching</p>
+<p>Compilation of HTML happens in three phases:</p>
+<blockquote>
+<div><p>1. First the HTML is parsed into DOM using the standard browser API. This is important to
+realize because the templates must be parsable HTML. This is in contrast to most templating
+systems that operate on strings, rather than on DOM elements.</p>
+<p>2. The compilation of the DOM is performed by the call to the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$compile
+$compile()} method. The method traverses the DOM and matches the directives. If a match is found
+it is added to the list of directives associated with the given DOM element. Once all directives
+for a given DOM element have been identified they are sorted by priority and their <cite>compile()</cite>
+functions are executed. The directive compile function has a chance to modify the DOM structure
+and is responsible for producing a <cite>link()</cite> function explained next. The <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.$compile $compile()} method returns a combined linking function, which is a
+collection of all of the linking functions returned from the individual directive compile
+functions.</p>
+<p>3. Link the template with scope by calling the linking function returned from the previous step.
+This in turn will call the linking function of the individual directives allowing them to
+register any listeners on the elements and set up any <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.$rootScope.Scope#$watch watches} with the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.$rootScope.Scope scope}. The result of this is a live binding between the
+scope and the DOM. A change in the scope is reflected in the DOM.</p>
+</div></blockquote>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd><p class="first">var $compile = ...; // injected into your code
+var scope = ...;</p>
+<p>var html = &#8216;&lt;div ng-bind=&#8221;exp&#8221;&gt;&lt;/div&gt;&#8217;;</p>
+<p>// Step 1: parse HTML into DOM element
+var template = angular.element(html);</p>
+<p>// Step 2: compile the template
+var linkFn = $compile(template);</p>
+<p class="last">// Step 3: link the compiled template with the scope.
+linkFn(scope);</p>
+</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>## Reasons behind the compile/link separation</p>
+<p>At this point you may wonder why the compile process is broken down to a compile and link phase.
+To understand this, let&#8217;s look at a real world example with a repeater:</p>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd><p class="first">Hello {{user}}, you have these actions:
+&lt;ul&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;li ng-repeat=&#8221;action in user.actions&#8221;&gt;</dt>
+<dd>{{action.description}}</dd>
+</dl>
+<p>&lt;/li&gt;</p>
+</div></blockquote>
+<p class="last">&lt;/ul&gt;</p>
+</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>The short answer is that compile and link separation is needed any time a change in model causes
+a change in DOM structure such as in repeaters.</p>
+<p>When the above example is compiled, the compiler visits every node and looks for directives. The
+<cite>{{user}}</cite> is an example of an <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$interpolate interpolation} directive. <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.directive:ngRepeat ngRepeat} is another directive. But {&#64;link
+api/ng.directive:ngRepeat ngRepeat} has a dilemma. It needs to be
+able to quickly stamp out new <cite>li`s for every `action</cite> in <cite>user.actions</cite>. This means that it needs
+to save a clean copy of the <cite>li</cite> element for cloning purposes and as new <cite>action`s are inserted,
+the template `li</cite> element needs to be cloned and inserted into <cite>ul</cite>. But cloning the <cite>li</cite> element
+is not enough. It also needs to compile the <cite>li</cite> so that its directives such as
+<cite>{{action.descriptions}}</cite> evaluate against the right <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$rootScope.Scope
+scope}. A naive method would be to simply insert a copy of the <cite>li</cite> element and then compile it.
+But compiling on every <cite>li</cite> element clone would be slow, since the compilation requires that we
+traverse the DOM tree and look for directives and execute them. If we put the compilation inside a
+repeater which needs to unroll 100 items we would quickly run into performance problems.</p>
+<p>The solution is to break the compilation process into two phases; the compile phase where all of
+the directives are identified and sorted by priority, and a linking phase where any work which
+links a specific instance of the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$rootScope.Scope scope} and the specific
+instance of an <cite>li</cite> is performed.</p>
+<p><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:ngRepeat ngRepeat} works by preventing the
+compilation process from descending into the <cite>li</cite> element. Instead the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.directive:ngRepeat ngRepeat} directive compiles <cite>li</cite>
+separately. The result of the <cite>li</cite> element compilation is a linking function which contains all
+of the directives contained in the <cite>li</cite> element, ready to be attached to a specific clone of the <cite>li</cite>
+element. At runtime the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:ngRepeat ngRepeat}
+watches the expression and as items are added to the array it clones the <cite>li</cite> element, creates a
+new <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$rootScope.Scope scope} for the cloned <cite>li</cite> element and calls the
+link function on the cloned <cite>li</cite>.</p>
+<p>Summary:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>compile function</em> - The compile function is relatively rare in directives, since most
+directives are concerned with working with a specific DOM element instance rather than
+transforming the template DOM element. Any operation which can be shared among the instance of
+directives should be moved to the compile function for performance reasons.</li>
+<li><em>link function</em> - It is rare for the directive not to have a link function. A link function
+allows the directive to register listeners to the specific cloned DOM element instance as well
+as to copy content into the DOM from the scope.</li>
+</ul>
+</div></blockquote>
+<p># Writing directives (short version)</p>
+<p>In this example we will build a directive that displays the current time.</p>
+<dl class="docutils">
+<dt>&lt;doc:example module=&#8221;time&#8221;&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;doc:source&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;script&gt;</dt>
+<dd><dl class="first docutils">
+<dt>function Ctrl2($scope) {</dt>
+<dd>$scope.format = &#8216;M/d/yy h:mm:ss a&#8217;;</dd>
+</dl>
+<p>}</p>
+<dl class="last docutils">
+<dt>angular.module(&#8216;time&#8217;, [])</dt>
+<dd><p class="first">// Register the &#8216;myCurrentTime&#8217; directive factory method.
+// We inject $timeout and dateFilter service since the factory method is DI.
+.directive(&#8216;myCurrentTime&#8217;, function($timeout, dateFilter) {</p>
+<blockquote>
+<div><p>// return the directive link function. (compile function not needed)
+return function(scope, element, attrs) {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>var format,  // date format</dt>
+<dd>timeoutId; // timeoutId, so that we can cancel the time updates</dd>
+</dl>
+<p>// used to update the UI
+function updateTime() {</p>
+<blockquote>
+<div>element.text(dateFilter(new Date(), format));</div></blockquote>
+<p>}</p>
+<p>// watch the expression, and update the UI on change.
+scope.$watch(attrs.myCurrentTime, function(value) {</p>
+<blockquote>
+<div>format = value;
+updateTime();</div></blockquote>
+<p>});</p>
+<p>// schedule update in one second
+function updateLater() {</p>
+<blockquote>
+<div><p>// save the timeoutId for canceling
+timeoutId = $timeout(function() {</p>
+<blockquote>
+<div>updateTime(); // update DOM
+updateLater(); // schedule another update</div></blockquote>
+<p>}, 1000);</p>
+</div></blockquote>
+<p>}</p>
+<p>// listen on DOM destroy (removal) event, and cancel the next UI update
+// to prevent updating time ofter the DOM element was removed.
+element.bind(&#8216;$destroy&#8217;, function() {</p>
+<blockquote>
+<div>$timeout.cancel(timeoutId);</div></blockquote>
+<p>});</p>
+<p>updateLater(); // kick off the UI update process.</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p class="last">});</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>&lt;/script&gt;
+&lt;div ng-controller=&#8221;Ctrl2&#8221;&gt;</p>
+<blockquote>
+<div>Date format: &lt;input ng-model=&#8221;format&#8221;&gt; &lt;hr/&gt;
+Current time is: &lt;span my-current-time=&#8221;format&#8221;&gt;&lt;/span&gt;</div></blockquote>
+<p class="last">&lt;/div&gt;</p>
+</dd>
+</dl>
+<p class="last">&lt;/doc:source&gt;</p>
+</dd>
+</dl>
+<p>&lt;/doc:example&gt;</p>
+<p># Writing directives (long version)</p>
+<p>An example skeleton of the directive is shown here, for the complete list see below.</p>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd><p class="first">var myModule = angular.module(...);</p>
+<dl class="docutils">
+<dt>myModule.directive(&#8216;directiveName&#8217;, function factory(injectables) {</dt>
+<dd><dl class="first docutils">
+<dt>var directiveDefinitionObject = {</dt>
+<dd><p class="first">priority: 0,
+template: &#8216;&lt;div&gt;&lt;/div&gt;&#8217;,
+templateUrl: &#8216;directive.html&#8217;,
+replace: false,
+transclude: false,
+restrict: &#8216;A&#8217;,
+scope: false,
+compile: function compile(tElement, tAttrs, transclude) {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>return {</dt>
+<dd>pre: function preLink(scope, iElement, iAttrs, controller) { ... },
+post: function postLink(scope, iElement, iAttrs, controller) { ... }</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p class="last">},
+link: function postLink(scope, iElement, iAttrs) { ... }</p>
+</dd>
+</dl>
+<p class="last">};
+return directiveDefinitionObject;</p>
+</dd>
+</dl>
+<p class="last">});</p>
+</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>In most cases you will not need such fine control and so the above can be simplified. All of the
+different parts of this skeleton are explained in following sections. In this section we are
+interested only in some of this skeleton.</p>
+<p>The first step in simplyfing the code is to rely on the default values. Therefore the above can be
+simplified as:</p>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd><p class="first">var myModule = angular.module(...);</p>
+<dl class="docutils">
+<dt>myModule.directive(&#8216;directiveName&#8217;, function factory(injectables) {</dt>
+<dd><dl class="first docutils">
+<dt>var directiveDefinitionObject = {</dt>
+<dd><dl class="first docutils">
+<dt>compile: function compile(tElement, tAttrs) {</dt>
+<dd>return function postLink(scope, iElement, iAttrs) { ... }</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p class="last">};
+return directiveDefinitionObject;</p>
+</dd>
+</dl>
+<p class="last">});</p>
+</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>Most directives concern themselves only with instances, not with template transformations, allowing
+further simplification:</p>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd><p class="first">var myModule = angular.module(...);</p>
+<dl class="docutils">
+<dt>myModule.directive(&#8216;directiveName&#8217;, function factory(injectables) {</dt>
+<dd>return function postLink(scope, iElement, iAttrs) { ... }</dd>
+</dl>
+<p class="last">});</p>
+</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>## Factory method</p>
+<p>The factory method is responsible for creating the directive. It is invoked only once, when the
+<a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$compile compiler} matches the directive for the first time. You can
+perform any initialization work here. The method is invoked using the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/AUTO.$injector#invoke $injector.invoke} which
+makes it injectable following all of the rules of injection annotation.</p>
+<p>## Directive Definition Object</p>
+<p>The directive definition object provides instructions to the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$compile
+compiler}. The attributes are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>name</cite> - Name of the current scope. Optional and defaults to the name at registration.</li>
+<li><cite>priority</cite> - When there are multiple directives defined on a single DOM element, sometimes it
+is necessary to specify the order in which the directives are applied. The <cite>priority</cite> is used
+to sort the directives before their <cite>compile</cite> functions get called. Higher <cite>priority</cite> goes
+first. The order of directives within the same priority is undefined.</li>
+<li><cite>terminal</cite> - If set to true then the current <cite>priority</cite> will be the last set of directives
+which will execute (any directives at the current priority will still execute
+as the order of execution on same <cite>priority</cite> is undefined).</li>
+<li><cite>scope</cite> - If set to:<ul>
+<li><cite>true</cite> - then a new scope will be created for this directive. If multiple directives on the
+same element request a new scope, only one new scope is created. The new scope rule does not
+apply for the root of the template since the root of the template always gets a new scope.</li>
+<li><cite>{}</cite> (object hash) - then a new &#8216;isolate&#8217; scope is created. The &#8216;isolate&#8217; scope differs from
+normal scope in that it does not prototypically inherit from the parent scope. This is useful
+when creating reusable components, which should not accidentally read or modify data in the
+parent scope. &lt;br/&gt;
+The &#8216;isolate&#8217; scope takes an object hash which defines a set of local scope properties
+derived from the parent scope. These local properties are useful for aliasing values for
+templates. Locals definition is a hash of local scope property to its source:<ul>
+<li><cite>&#64;</cite> or <cite>&#64;attr</cite> - bind a local scope property to the value of DOM attribute. The result is
+always a string since DOM attributes are strings. If no <cite>attr</cite> name is specified  then the
+attribute name is assumed to be the same as the local name.
+Given <cite>&lt;widget my-attr=&#8221;hello {{name}}&#8221;&gt;</cite> and widget definition
+of <cite>scope: { localName:&#8217;&#64;myAttr&#8217; }</cite>, then widget scope property <cite>localName</cite> will reflect
+the interpolated value of <cite>hello {{name}}</cite>. As the <cite>name</cite> attribute changes so will the
+<cite>localName</cite> property on the widget scope. The <cite>name</cite> is read from the parent scope (not
+component scope).</li>
+<li><cite>=</cite> or <cite>=attr</cite> - set up bi-directional binding between a local scope property and the
+parent scope property of name defined via the value of the <cite>attr</cite> attribute. If no <cite>attr</cite>
+name is specified then the attribute name is assumed to be the same as the local name.
+Given <cite>&lt;widget my-attr=&#8221;parentModel&#8221;&gt;</cite> and widget definition of
+<cite>scope: { localModel:&#8217;=myAttr&#8217; }</cite>, then widget scope property <cite>localModel</cite> will reflect the
+value of <cite>parentModel</cite> on the parent scope. Any changes to <cite>parentModel</cite> will be reflected
+in <cite>localModel</cite> and any changes in <cite>localModel</cite> will reflect in <cite>parentModel</cite>.</li>
+<li><cite>&amp;</cite> or <cite>&amp;attr</cite> - provides a way to execute an expression in the context of the parent scope.
+If no <cite>attr</cite> name is specified then the attribute name is assumed to be the same as the
+local name. Given <cite>&lt;widget my-attr=&#8221;count = count + value&#8221;&gt;</cite> and widget definition of
+<cite>scope: { localFn:&#8217;&amp;myAttr&#8217; }</cite>, then isolate scope property <cite>localFn</cite> will point to
+a function wrapper for the <cite>count = count + value</cite> expression. Often it&#8217;s desirable to
+pass data from the isolated scope via an expression and to the parent scope, this can be
+done by passing a map of local variable names and values into the expression wrapper fn.
+For example, if the expression is <cite>increment(amount)</cite> then we can specify the amount value
+by calling the <cite>localFn</cite> as <cite>localFn({amount: 22})</cite>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><cite>controller</cite> - Controller constructor function. The controller is instantiated before the
+pre-linking phase and it is shared with other directives if they request it by name (see
+<cite>require</cite> attribute). This allows the directives to communicate with each other and augment
+each other&#8217;s behavior. The controller is injectable with the following locals:<ul>
+<li><cite>$scope</cite> - Current scope associated with the element</li>
+<li><cite>$element</cite> - Current element</li>
+<li><cite>$attrs</cite> - Current attributes obeject for the element</li>
+<li><cite>$transclude</cite> - A transclude linking function pre-bound to the correct transclusion scope:
+<cite>function(cloneLinkingFn)</cite>.</li>
+</ul>
+</li>
+<li><cite>require</cite> - Require another controller be passed into current directive linking function. The
+<cite>require</cite> takes a name of the directive controller to pass in. If no such controller can be
+found an error is raised. The name can be prefixed with:<ul>
+<li><cite>?</cite> - Don&#8217;t raise an error. This makes the require dependency optional.</li>
+<li><cite>^</cite> - Look for the controller on parent elements as well.</li>
+</ul>
+</li>
+<li><cite>restrict</cite> - String of subset of <cite>EACM</cite> which restricts the directive to a specific directive
+declaration style. If omitted directives are allowed on attributes only.<ul>
+<li><cite>E</cite> - Element name: <cite>&lt;my-directive&gt;&lt;/my-directive&gt;</cite></li>
+<li><cite>A</cite> - Attribute: <cite>&lt;div my-directive=&#8221;exp&#8221;&gt;&lt;/div&gt;</cite></li>
+<li><cite>C</cite> - Class: <cite>&lt;div class=&#8221;my-directive: exp;&#8221;&gt;&lt;/div&gt;</cite></li>
+<li><cite>M</cite> - Comment: <cite>&lt;!&#8211; directive: my-directive exp &#8211;&gt;</cite></li>
+</ul>
+</li>
+<li><cite>template</cite> - replace the current element with the contents of the HTML. The replacement process
+migrates all of the attributes / classes from the old element to the new one. See Creating
+Widgets section below for more information.</li>
+<li><cite>templateUrl</cite> - Same as <cite>template</cite> but the template is loaded from the specified URL. Because
+the template loading is asynchronous the compilation/linking is suspended until the template
+is loaded.</li>
+<li><cite>replace</cite> - if set to <cite>true</cite> then the template will replace the current element, rather than
+append the template to the element.</li>
+<li><cite>transclude</cite> - compile the content of the element and make it available to the directive.
+Typically used with <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:ngTransclude
+ngTransclude}. The advantage of transclusion is that the linking function receives a
+transclusion function which is pre-bound to the correct scope. In a typical setup the widget
+creates an <cite>isolate</cite> scope, but the transclusion is not a child, but a sibling of the <cite>isolate</cite>
+scope. This makes it possible for the widget to have private state, and the transclusion to
+be bound to the parent (pre-<cite>isolate</cite>) scope.<ul>
+<li><cite>true</cite> - transclude the content of the directive.</li>
+<li><cite>&#8216;element&#8217;</cite> - transclude the whole element including any directives defined at lower priority.</li>
+</ul>
+</li>
+<li><cite>compile</cite>: This is the compile function described in the section below.</li>
+<li><cite>link</cite>: This is the link function described in the section below. This property is used only
+if the <cite>compile</cite> property is not defined.</li>
+</ul>
+</div></blockquote>
+<p>## Compile function</p>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd>function compile(tElement, tAttrs, transclude) { ... }</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>The compile function deals with transforming the template DOM. Since most directives do not do
+template transformation, it is not used often. Examples that require compile functions are
+directives that transform template DOM, such as <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.directive:ngRepeat ngRepeat}, or load the contents
+asynchronously, such as {&#64;link api/ng.directive:ngView ngView}. The
+compile function takes the following arguments.</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>tElement</cite> - template element - The element where the directive has been declared. It is
+safe to do template transformation on the element and child elements only.</li>
+<li><cite>tAttrs</cite> - template attributes - Normalized list of attributes declared on this element shared
+between all directive compile functions. See <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+guide/directive#Attributes Attributes}.</li>
+<li><cite>transclude</cite> - A transclude linking function: <cite>function(scope, cloneLinkingFn)</cite>.</li>
+</ul>
+</div></blockquote>
+<p>NOTE: The template instance and the link instance may not be the same objects if the template has
+been cloned. For this reason it is not safe in the compile function to do anything other than DOM
+transformation that applies to all DOM clones. Specifically, DOM listener registration should be
+done in a linking function rather than in a compile function.</p>
+<p>A compile function can have a return value which can be either a function or an object.</p>
+<ul class="simple">
+<li>returning a function - is equivalent to registering the linking function via the <cite>link</cite> property
+of the config object when the compile function is empty.</li>
+<li>returning an object with function(s) registered via <cite>pre</cite> and <cite>post</cite> properties - allows you to
+control when a linking function should be called during the linking phase. See info about
+pre-linking and post-linking functions below.</li>
+</ul>
+<p>## Linking function</p>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd>function link(scope, iElement, iAttrs, controller) { ... }</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>The link function is responsible for registering DOM listeners as well as updating the DOM. It is
+executed after the template has been cloned. This is where most of the directive logic will be
+put.</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>scope</cite> - <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$rootScope.Scope Scope} - The scope to be used by the
+directive for registering <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$rootScope.Scope#$watch watches}.</li>
+<li><cite>iElement</cite> - instance element - The element where the directive is to be used. It is safe to
+manipulate the children of the element only in <cite>postLink</cite> function since the children have
+already been linked.</li>
+<li><cite>iAttrs</cite> - instance attributes - Normalized list of attributes declared on this element shared
+between all directive linking functions. See <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+guide/directive#Attributes Attributes}.</li>
+<li><cite>controller</cite> - a controller instance - A controller instance if at least one directive on the
+element defines a controller. The controller is shared among all the directives, which allows
+the directives to use the controllers as a communication channel.</li>
+</ul>
+</div></blockquote>
+<p>### Pre-linking function</p>
+<p>Executed before the child elements are linked. Not safe to do DOM transformation since the
+compiler linking function will fail to locate the correct elements for linking.</p>
+<p>### Post-linking function</p>
+<p>Executed after the child elements are linked. It is safe to do DOM transformation in the post-linking function.</p>
+<p>&lt;a name=&#8221;Attributes&#8221;&gt;&lt;/a&gt;
+## Attributes</p>
+<p>The <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$compile.directive.Attributes Attributes} object - passed as a parameter in the
+link() or compile() functions - is a way of accessing:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>normalized attribute names:</em> Since a directive such as &#8216;ngBind&#8217; can be expressed in many ways
+such as &#8216;ng:bind&#8217;, or &#8216;x-ng-bind&#8217;, the attributes object allows for normalized accessed to
+the attributes.</li>
+<li><em>directive inter-communication:</em> All directives share the same instance of the attributes
+object which allows the directives to use the attributes object as inter directive
+communication.</li>
+<li><em>supports interpolation:</em> Interpolation attributes are assigned to the attribute object
+allowing other directives to read the interpolated value.</li>
+<li><em>observing interpolated attributes:</em> Use <cite>$observe</cite> to observe the value changes of attributes
+that contain interpolation (e.g. <cite>src=&#8221;{{bar}}&#8221;</cite>). Not only is this very efficient but it&#8217;s also
+the only way to easily get the actual value because during the linking phase the interpolation
+hasn&#8217;t been evaluated yet and so the value is at this time set to <cite>undefined</cite>.</li>
+</ul>
+</div></blockquote>
+<p>&lt;pre&gt;
+function linkingFn(scope, elm, attrs, ctrl) {</p>
+<blockquote>
+<div><p>// get the attribute value
+console.log(attrs.ngModel);</p>
+<p>// change the attribute
+attrs.$set(&#8216;ngModel&#8217;, &#8216;new value&#8217;);</p>
+<p>// observe changes to interpolated attribute
+attrs.$observe(&#8216;ngModel&#8217;, function(value) {</p>
+<blockquote>
+<div>console.log(&#8216;ngModel has changed value to &#8216; + value);</div></blockquote>
+<p>});</p>
+</div></blockquote>
+<p>}
+&lt;/pre&gt;</p>
+<p># Understanding Transclusion and Scopes</p>
+<p>It is often desirable to have reusable components. Below is a pseudo code showing how a simplified
+dialog component may work.</p>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;div&gt;</dt>
+<dd><p class="first">&lt;button ng-click=&#8221;show=true&#8221;&gt;show&lt;/button&gt;
+&lt;dialog title=&#8221;Hello {{username}}.&#8221;</p>
+<blockquote>
+<div><blockquote>
+<div>visible=&#8221;show&#8221;
+on-cancel=&#8221;show = false&#8221;
+on-ok=&#8221;show = false; doSomething()&#8221;&gt;</div></blockquote>
+<p>Body goes here: {{username}} is {{title}}.</p>
+</div></blockquote>
+<p class="last">&lt;/dialog&gt;</p>
+</dd>
+</dl>
+<p class="last">&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>Clicking on the &#8220;show&#8221; button will open the dialog. The dialog will have a title, which is
+data bound to <cite>username</cite>, and it will also have a body which we would like to transclude
+into the dialog.</p>
+<p>Here is an example of what the template definition for the <cite>dialog</cite> widget may look like.</p>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;div ng-show=&#8221;visible&#8221;&gt;</dt>
+<dd><p class="first">&lt;h3&gt;{{title}}&lt;/h3&gt;
+&lt;div class=&#8221;body&#8221; ng-transclude&gt;&lt;/div&gt;
+&lt;div class=&#8221;footer&#8221;&gt;</p>
+<blockquote>
+<div>&lt;button ng-click=&#8221;onOk()&#8221;&gt;Save changes&lt;/button&gt;
+&lt;button ng-click=&#8221;onCancel()&#8221;&gt;Close&lt;/button&gt;</div></blockquote>
+<p class="last">&lt;/div&gt;</p>
+</dd>
+</dl>
+<p class="last">&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>This will not render properly, unless we do some scope magic.</p>
+<p>The first issue we have to solve is that the dialog box template expects <cite>title</cite> to be defined, but
+the place of instantiation would like to bind to <cite>username</cite>. Furthermore the buttons expect the
+<cite>onOk</cite> and <cite>onCancel</cite> functions to be present in the scope. This limits the usefulness of the
+widget. To solve the mapping issue we use the <cite>locals</cite> to create local variables which the template
+expects as follows:</p>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd><dl class="first docutils">
+<dt>scope: {</dt>
+<dd>title: &#8216;&#64;&#8217;,             // the title uses the data-binding from the parent scope
+onOk: &#8216;&amp;&#8217;,              // create a delegate onOk function
+onCancel: &#8216;&amp;&#8217;,          // create a delegate onCancel function
+visible: &#8216;=&#8217;            // set up visible to accept data-binding</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>Creating local properties on widget scope creates two problems:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>isolation - if the user forgets to set <cite>title</cite> attribute of the dialog widget the dialog
+template will bind to parent scope property. This is unpredictable and undesirable.</li>
+<li>transclusion - the transcluded DOM can see the widget locals, which may overwrite the
+properties which the transclusion needs for data-binding. In our example the <cite>title</cite>
+property of the widget clobbers the <cite>title</cite> property of the transclusion.</li>
+</ol>
+</div></blockquote>
+<p>To solve the issue of lack of isolation, the directive declares a new <cite>isolated</cite> scope. An
+isolated scope does not prototypically inherit from the child scope, and therefore we don&#8217;t have
+to worry about accidentally clobbering any properties.</p>
+<p>However <cite>isolated</cite> scope creates a new problem: if a transcluded DOM is a child of the widget
+isolated scope then it will not be able to bind to anything. For this reason the transcluded scope
+is a child of the original scope, before the widget created an isolated scope for its local
+variables. This makes the transcluded and widget isolated scope siblings.</p>
+<p>This may seem to be unexpected complexity, but it gives the widget user and developer the least
+surprise.</p>
+<p>Therefore the final directive definition looks something like this:</p>
+<p>&lt;pre&gt;
+transclude: true,
+scope: {</p>
+<blockquote>
+<div>title: &#8216;&#64;&#8217;,             // the title uses the data-binding from the parent scope
+onOk: &#8216;&amp;&#8217;,              // create a delegate onOk function
+onCancel: &#8216;&amp;&#8217;,          // create a delegate onCancel function
+visible: &#8216;=&#8217;            // set up visible to accept data-binding</div></blockquote>
+<p>},
+restrict: &#8216;E&#8217;,
+replace: true
+&lt;/pre&gt;</p>
+<p># Creating Components</p>
+<p>It is often desirable to replace a single directive with a more complex DOM structure. This
+allows the directives to become a short hand for reusable components from which applications
+can be built.</p>
+<p>Following is an example of building a reusable widget.</p>
+<dl class="docutils">
+<dt>&lt;doc:example module=&#8221;zippyModule&#8221;&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;doc:source&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;script&gt;</dt>
+<dd><dl class="first docutils">
+<dt>function Ctrl3($scope) {</dt>
+<dd>$scope.title = &#8216;Lorem Ipsum&#8217;;
+$scope.text = &#8216;Neque porro quisquam est qui dolorem ipsum quia dolor...&#8217;;</dd>
+</dl>
+<p>}</p>
+<dl class="last docutils">
+<dt>angular.module(&#8216;zippyModule&#8217;, [])</dt>
+<dd><dl class="first docutils">
+<dt>.directive(&#8216;zippy&#8217;, function(){</dt>
+<dd><dl class="first docutils">
+<dt>return {</dt>
+<dd><p class="first">restrict: &#8216;C&#8217;,
+// This HTML will replace the zippy directive.
+replace: true,
+transclude: true,
+scope: { title:&#8217;&#64;zippyTitle&#8217; },
+template: &#8216;&lt;div&gt;&#8217; +</p>
+<blockquote>
+<div><blockquote>
+<div>&#8216;&lt;div class=&#8221;title&#8221;&gt;{{title}}&lt;/div&gt;&#8217; +
+&#8216;&lt;div class=&#8221;body&#8221; ng-transclude&gt;&lt;/div&gt;&#8217; +</div></blockquote>
+<p>&#8216;&lt;/div&gt;&#8217;,</p>
+</div></blockquote>
+<p>// The linking function will add behavior to the template
+link: function(scope, element, attrs) {</p>
+<blockquote>
+<div><blockquote>
+<div>// Title element</div></blockquote>
+<dl class="docutils">
+<dt>var title = angular.element(element.children()[0]),</dt>
+<dd>// Opened / closed state
+opened = true;</dd>
+</dl>
+<p>// Clicking on title should open/close the zippy
+title.bind(&#8216;click&#8217;, toggle);</p>
+<p>// Toggle the closed/opened state
+function toggle() {</p>
+<blockquote>
+<div>opened = !opened;
+element.removeClass(opened ? &#8216;closed&#8217; : &#8216;opened&#8217;);
+element.addClass(opened ? &#8216;opened&#8217; : &#8216;closed&#8217;);</div></blockquote>
+<p>}</p>
+<p>// initialize the zippy
+toggle();</p>
+</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p class="last">});</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>&lt;/script&gt;
+&lt;style&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>.zippy {</dt>
+<dd>border: 1px solid black;
+display: inline-block;
+width: 250px;</dd>
+</dl>
+<p>}
+.zippy.opened &gt; .title:before { content: &#8216;▼ &#8216;; }
+.zippy.opened &gt; .body { display: block; }
+.zippy.closed &gt; .title:before { content: &#8216;► &#8216;; }
+.zippy.closed &gt; .body { display: none; }
+.zippy &gt; .title {</p>
+<blockquote>
+<div>background-color: black;
+color: white;
+padding: .1em .3em;
+cursor: pointer;</div></blockquote>
+<p>}
+.zippy &gt; .body {</p>
+<blockquote>
+<div>padding: .1em .3em;</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>&lt;/style&gt;
+&lt;div ng-controller=&#8221;Ctrl3&#8221;&gt;</p>
+<blockquote>
+<div>Title: &lt;input ng-model=&#8221;title&#8221;&gt; &lt;br&gt;
+Text: &lt;textarea ng-model=&#8221;text&#8221;&gt;&lt;/textarea&gt;
+&lt;hr&gt;
+&lt;div class=&#8221;zippy&#8221; zippy-title=&#8221;Details: {{title}}...&#8221;&gt;{{text}}&lt;/div&gt;</div></blockquote>
+<p class="last">&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>&lt;/doc:source&gt;
+&lt;doc:scenario&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>it(&#8216;should bind and open / close&#8217;, function() {</dt>
+<dd><p class="first">input(&#8216;title&#8217;).enter(&#8216;TITLE&#8217;);
+input(&#8216;text&#8217;).enter(&#8216;TEXT&#8217;);
+expect(element(&#8216;.title&#8217;).text()).toEqual(&#8216;Details: TITLE...&#8217;);
+expect(binding(&#8216;text&#8217;)).toEqual(&#8216;TEXT&#8217;);</p>
+<p class="last">expect(element(&#8216;.zippy&#8217;).prop(&#8216;className&#8217;)).toMatch(/closed/);
+element(&#8216;.zippy &gt; .title&#8217;).click();
+expect(element(&#8216;.zippy&#8217;).prop(&#8216;className&#8217;)).toMatch(/opened/);</p>
+</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p class="last">&lt;/doc:scenario&gt;</p>
+</dd>
+</dl>
+<p>&lt;/doc:example&gt;</p>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/directive.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

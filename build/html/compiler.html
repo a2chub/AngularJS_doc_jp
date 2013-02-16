@@ -1,0 +1,227 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Developer Guide: HTML Compiler
+&#64;description</p>
+<p># Overview</p>
+<p>Angular&#8217;s <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$compile HTML compiler} allows the developer to teach the
+browser new HTML syntax. The compiler allows you to attach behavior to any HTML element or attribute
+and even create new HTML element or attributes with custom behavior. Angular calls these behavior
+extensions <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$compileProvider#directive directives}.</p>
+<p>HTML has a lot of constructs for formatting the HTML for static documents in a declarative fashion.
+For example if something needs to be centered, there is no need to provide instructions to the
+browser how the window size needs to be divided in half so that center is found, and that this
+center needs to be aligned with the text&#8217;s center. Simply add <cite>align=&#8221;center&#8221;</cite> attribute to any
+element to achieve the desired behavior. Such is the power of declarative language.</p>
+<p>But the declarative language is also limited, since it does not allow you to teach the browser new
+syntax. For example there is no easy way to get the browser to align the text at 1/3 the position
+instead of 1/2. What is needed is a way to teach browser new HTML syntax.</p>
+<p>Angular comes pre-bundled with common directives which are useful for building any app. We also
+expect that you will create directives that are specific to your app. These extension become a
+Domain Specific Language for building your application.</p>
+<p>All of this compilation takes place in the web browser; no server side or pre-compilation step is
+involved.</p>
+<p># Compiler</p>
+<p>Compiler is an angular service which traverses the DOM looking for attributes. The compilation
+process happens into two phases.</p>
+<blockquote>
+<div><p>1. <strong>Compile:</strong> traverse the DOM and collect all of the directives. The result is a linking
+function.</p>
+<p>2. <strong>Link:</strong> combine the directives with a scope and produce a live view. Any changes in the
+scope model are reflected in the view, and any user interactions with the view are reflected
+in the scope model. This makes the scope model the single source of truth.</p>
+</div></blockquote>
+<p>Some directives such <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:ngRepeat
+<cite>ng-repeat</cite>} clone DOM elements once for each item in collection. Having a compile and link phase
+improves performance since the cloned template only needs to be compiled once, and then linked
+once for each clone instance.</p>
+<p># Directive</p>
+<p>A directive is a behavior which should be triggered when specific HTML constructs are encountered in
+the compilation process. The directives can be placed in element names, attributes, class names, as
+well as comments. Here are some equivalent examples of invoking the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.directive:ngBind <cite>ng-bind</cite>} directive.</p>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd>&lt;span ng-bind=&#8221;exp&#8221;&gt;&lt;/span&gt;
+&lt;span class=&#8221;ng-bind: exp;&#8221;&gt;&lt;/span&gt;
+&lt;ng-bind&gt;&lt;/ng-bind&gt;
+&lt;!&#8211; directive: ng-bind exp &#8211;&gt;</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>A directive is just a function which executes when the compiler encounters it in the DOM. See <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.$compileProvider#directive directive API} for in-depth documentation on how
+to write directives.</p>
+<p>Here is a directive which makes any element draggable. Notice the <cite>draggable</cite> attribute on the
+<cite>&lt;span&gt;</cite> element.</p>
+<dl class="docutils">
+<dt>&lt;example module=&#8221;drag&#8221;&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;file name=&#8221;script.js&#8221;&gt;</dt>
+<dd><dl class="first last docutils">
+<dt>angular.module(&#8216;drag&#8217;, []).</dt>
+<dd><dl class="first docutils">
+<dt>directive(&#8216;draggable&#8217;, function($document) {</dt>
+<dd><p class="first">var startX=0, startY=0, x = 0, y = 0;
+return function(scope, element, attr) {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>element.css({</dt>
+<dd>position: &#8216;relative&#8217;,
+border: &#8216;1px solid red&#8217;,
+backgroundColor: &#8216;lightgrey&#8217;,
+cursor: &#8216;pointer&#8217;</dd>
+</dl>
+<p>});
+element.bind(&#8216;mousedown&#8217;, function(event) {</p>
+<blockquote>
+<div>startX = event.screenX - x;
+startY = event.screenY - y;
+$document.bind(&#8216;mousemove&#8217;, mousemove);
+$document.bind(&#8216;mouseup&#8217;, mouseup);</div></blockquote>
+<p>});</p>
+<dl class="docutils">
+<dt>function mousemove(event) {</dt>
+<dd><p class="first">y = event.screenY - startY;
+x = event.screenX - startX;
+element.css({</p>
+<blockquote>
+<div>top: y + &#8216;px&#8217;,
+left:  x + &#8216;px&#8217;</div></blockquote>
+<p class="last">});</p>
+</dd>
+</dl>
+<p>}</p>
+<dl class="docutils">
+<dt>function mouseup() {</dt>
+<dd>$document.unbind(&#8216;mousemove&#8217;, mousemove);
+$document.unbind(&#8216;mouseup&#8217;, mouseup);</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+<p class="last">});</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>&lt;/file&gt;
+&lt;file name=&#8221;index.html&#8221;&gt;</p>
+<blockquote>
+<div>&lt;span draggable&gt;Drag ME&lt;/span&gt;</div></blockquote>
+<p class="last">&lt;/file&gt;</p>
+</dd>
+</dl>
+<p>&lt;/example&gt;</p>
+<p>The presence of the <cite>draggable</cite> attribute on any element gives the element new behavior. The beauty of
+this approach is that we have taught the browser a new trick. We have extended the vocabulary of
+what the browser understands in a way which is natural to anyone who is familiar with HTML
+principles.</p>
+<p># Understanding View</p>
+<p>There are many templating systems out there. Most of them consume a static string template and
+combine it with data, resulting in a new string. The resulting text is then <a href="#id1"><span class="problematic" id="id2">`</span></a>innerHTML`ed into
+an element.</p>
+<p>&lt;img src=&#8221;img/One_Way_Data_Binding.png&#8221;&gt;</p>
+<p>This means that any changes to the data need to be re-merged with the template and then
+<a href="#id3"><span class="problematic" id="id4">`</span></a>innerHTML`ed into the DOM. Some of the issues with this approach are: reading user input and merging it with data,
+clobbering user input by overwriting it, managing the whole update process, and lack of behavior
+expressiveness.</p>
+<p>Angular is different. The Angular compiler consumes the DOM with directives, not string templates.
+The result is a linking function, which when combined with a scope model results in a live view. The
+view and scope model bindings are transparent. No action from the developer is needed to update
+the view. And because no <cite>innerHTML</cite> is used there are no issues of clobbering user input.
+Furthermore, Angular directives can contain not just text bindings, but behavioral constructs as
+well.</p>
+<p>&lt;img src=&#8221;img/Two_Way_Data_Binding.png&#8221;&gt;</p>
+<p>The Angular approach produces a stable DOM. This means that the DOM element instance bound to a model
+item instance does not change for the lifetime of the binding. This means that the code can get
+hold of the elements and register event handlers and know that the reference will not be destroyed
+by template data merge.</p>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/compiler.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

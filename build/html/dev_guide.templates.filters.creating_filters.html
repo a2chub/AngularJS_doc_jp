@@ -1,0 +1,162 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Developer Guide: Templates: Filters: Creating Angular Filters
+&#64;description</p>
+<p>Writing your own filter is very easy: just register a new filter (injectable) factory function with
+your module. This factory function should return a new filter function which takes the input value
+as the first argument. Any filter arguments are passed in as additional arguments to the filter
+function.</p>
+<p>The following sample filter reverses a text string. In addition, it conditionally makes the
+text upper-case and assigns color.</p>
+<p>&lt;doc:example module=&#8221;MyReverseModule&#8221;&gt;
+&lt;doc:source&gt;
+&lt;script&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>angular.module(&#8216;MyReverseModule&#8217;, []).</dt>
+<dd><dl class="first docutils">
+<dt>filter(&#8216;reverse&#8217;, function() {</dt>
+<dd><dl class="first docutils">
+<dt>return function(input, uppercase) {</dt>
+<dd><p class="first">var out = &#8220;&#8221;;
+for (var i = 0; i &lt; input.length; i++) {</p>
+<blockquote>
+<div>out = input.charAt(i) + out;</div></blockquote>
+<p>}
+// conditional based on optional argument
+if (uppercase) {</p>
+<blockquote>
+<div>out = out.toUpperCase();</div></blockquote>
+<p class="last">}
+return out;</p>
+</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p class="last">});</p>
+</dd>
+<dt>function Ctrl($scope) {</dt>
+<dd>$scope.greeting = &#8216;hello&#8217;;</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>&lt;/script&gt;</p>
+<dl class="docutils">
+<dt>&lt;div ng-controller=&#8221;Ctrl&#8221;&gt;</dt>
+<dd>&lt;input ng-model=&#8221;greeting&#8221; type=&#8221;greeting&#8221;&gt;&lt;br&gt;
+No filter: {{greeting}}&lt;br&gt;
+Reverse: {{greeting|reverse}}&lt;br&gt;
+Reverse + uppercase: {{greeting|reverse:true}}&lt;br&gt;</dd>
+</dl>
+<p>&lt;/div&gt;
+&lt;/doc:source&gt;
+&lt;doc:scenario&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>it(&#8216;should reverse greeting&#8217;, function() {</dt>
+<dd>expect(binding(&#8216;greeting|reverse&#8217;)).toEqual(&#8216;olleh&#8217;);
+input(&#8216;greeting&#8217;).enter(&#8216;ABC&#8217;);
+expect(binding(&#8216;greeting|reverse&#8217;)).toEqual(&#8216;CBA&#8217;);</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p>&lt;/doc:scenario&gt;
+&lt;/doc:example&gt;</p>
+<p>## Related Topics</p>
+<ul class="simple">
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.templates.filters Understanding Angular Filters}</li>
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> compiler Angular HTML Compiler}</li>
+</ul>
+<p>## Related API</p>
+<ul class="simple">
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$filter Angular Filter API}</li>
+</ul>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/dev_guide.templates.filters.creating_filters.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

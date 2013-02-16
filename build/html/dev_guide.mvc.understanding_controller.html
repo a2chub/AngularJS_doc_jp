@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Developer Guide: About MVC in Angular: Understanding the Controller Component
+&#64;description</p>
+<p>In Angular, a controller is a JavaScript function(type/class) that is used to augment instances of
+angular <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> scope Scope}, excluding the root scope. When you or Angular create a new
+child scope object via the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$rootScope.Scope#$new scope.$new} API        , there is an
+option to pass in a controller as a method argument. This will tell Angular to associate the
+controller with the new scope and to augment its behavior.</p>
+<p>Use controllers to:</p>
+<ul class="simple">
+<li>Set up the initial state of a scope object.</li>
+<li>Add behavior to the scope object.</li>
+</ul>
+<p># Setting up the initial state of a scope object</p>
+<p>Typically, when you create an application you need to set up an initial state for an Angular scope.</p>
+<p>Angular applies (in the sense of JavaScript&#8217;s <cite>Function#apply</cite>) the controller constructor function
+to a new Angular scope object, which sets up an initial scope state. This means that Angular never
+creates instances of the controller type (by invoking the <cite>new</cite> operator on the controller
+constructor). Constructors are always applied to an existing scope object.</p>
+<p>You set up the initial state of a scope by creating model properties. For example:</p>
+<dl class="docutils">
+<dt>function GreetingCtrl($scope) {</dt>
+<dd>$scope.greeting = &#8216;Hola!&#8217;;</dd>
+</dl>
+<p>}</p>
+<p>The <cite>GreetingCtrl</cite> controller creates a <cite>greeting</cite> model which can be referred to in a template.</p>
+<p><strong>NOTE</strong>: Many of the examples in the documentation show the creation of functions
+in the global scope. This is only for demonstration purposes - in a real
+application you should use the <cite>.controller</cite> method of your Angular module for
+your application as follows:</p>
+<p>var myApp = angular.module(&#8216;myApp&#8217;,[]);</p>
+<dl class="docutils">
+<dt>myApp.controller(&#8216;GreetingCtrl&#8217;, [&#8216;$scope&#8217;, function(scope) {</dt>
+<dd>scope.greeting = &#8216;Hola!&#8217;;</dd>
+</dl>
+<p>}]);</p>
+<p>Note also that we use the array notation to explicitly specify the dependency
+of the controller on the <cite>$scope</cite> service provided by Angular.</p>
+<p># Adding Behavior to a Scope Object</p>
+<p>Behavior on an Angular scope object is in the form of scope method properties available to the
+template/view. This behavior interacts with and modifies the application model.</p>
+<p>As discussed in the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.mvc.understanding_model Model} section of this guide, any
+objects (or primitives) assigned to the scope become model properties. Any functions assigned to
+the scope are available in the template/view, and can be invoked via angular expressions
+and <cite>ng</cite> event handler directives (e.g. <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:ngClick ngClick}).</p>
+<p># Using Controllers Correctly</p>
+<p>In general, a controller shouldn&#8217;t try to do too much. It should contain only the business logic
+needed for a single view.</p>
+<p>The most common way to keep controllers slim is by encapsulating work that doesn&#8217;t belong to
+controllers into services and then using these services in controllers via dependency injection.
+This is discussed in the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> di Dependency Injection} <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services
+Services} sections of this guide.</p>
+<p>Do not use controllers for:</p>
+<ul class="simple">
+<li>Any kind of DOM manipulation — Controllers should contain only business logic. DOM</li>
+</ul>
+<p>manipulation—the presentation logic of an application—is well known for being hard to test.
+Putting any presentation logic into controllers significantly affects testability of the business
+logic. Angular offers <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.templates.databinding databinding} for automatic DOM manipulation. If
+you have to perform your own manual DOM manipulation, encapsulate the presentation logic in
+<a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> guide/directive directives}.
+- Input formatting — Use <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> forms angular form controls} instead.
+- Output filtering — Use <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.templates.filters angular filters} instead.
+- To run stateless or stateful code shared across controllers — Use <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services angular
+services} instead.
+- To instantiate or manage the life-cycle of other components (for example, to create service
+instances).</p>
+<p># Associating Controllers with Angular Scope Objects</p>
+<p>You can associate controllers with scope objects explicitly via the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$rootScope.Scope#$new
+scope.$new} api or implicitly via the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:ngController ngController
+directive} or {&#64;link api/ng.$route $route service}.</p>
+<p>## Controller Constructor and Methods Example</p>
+<p>To illustrate how the controller component works in angular, let&#8217;s create a little app with the
+following components:</p>
+<ul class="simple">
+<li>A <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.templates template} with two buttons and a simple message</li>
+<li>A model consisting of a string named <cite>spice</cite></li>
+<li>A controller with two functions that set the value of <cite>spice</cite></li>
+</ul>
+<p>The message in our template contains a binding to the <cite>spice</cite> model, which by default is set to the
+string &#8220;very&#8221;. Depending on which button is clicked, the <cite>spice</cite> model is set to <cite>chili</cite> or
+<cite>jalapeño</cite>, and the message is automatically updated by data-binding.</p>
+<p>## A Spicy Controller Example</p>
+<p>&lt;pre&gt;
+&lt;body ng-controller=&#8221;SpicyCtrl&#8221;&gt;</p>
+<blockquote>
+<div>&lt;button ng-click=&#8221;chiliSpicy()&#8221;&gt;Chili&lt;/button&gt;
+&lt;button ng-click=&#8221;jalapenoSpicy()&#8221;&gt;Jalapeño&lt;/button&gt;
+&lt;p&gt;The food is {{spice}} spicy!&lt;/p&gt;</div></blockquote>
+<p>&lt;/body&gt;</p>
+<dl class="docutils">
+<dt>function SpicyCtrl($scope) {</dt>
+<dd><p class="first">$scope.spice = &#8216;very&#8217;;
+$scope.chiliSpicy = function() {</p>
+<blockquote>
+<div>$scope.spice = &#8216;chili&#8217;;</div></blockquote>
+<p>}
+$scope.jalapenoSpicy = function() {</p>
+<blockquote>
+<div>$scope.spice = &#8216;jalapeño&#8217;;</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>}</p>
+<p>&lt;/pre&gt;</p>
+<p>Things to notice in the example above:</p>
+<ul class="simple">
+<li>The <cite>ngController</cite> directive is used to (implicitly) create a scope for our template, and the</li>
+</ul>
+<p>scope is augmented (managed) by the <cite>SpicyCtrl</cite> controller.
+- <cite>SpicyCtrl</cite> is just a plain JavaScript function. As an (optional) naming convention the name
+starts with capital letter and ends with &#8220;Ctrl&#8221; or &#8220;Controller&#8221;.
+- Assigning a property to <cite>$scope</cite> creates or updates the model.
+- Controller methods can be created through direct assignment to scope (the <cite>chiliSpicy</cite> method)
+- Both controller methods are available in the template (for the <cite>body</cite> element and and its
+children).
+- NB:  Previous versions of Angular (pre 1.0 RC) allowed you to use <cite>this</cite> interchangeably with
+the $scope method, but this is no longer the case.  Inside of methods defined on the scope
+<cite>this</cite> and $scope are interchangeable (angular sets <cite>this</cite> to $scope), but not otherwise
+inside your controller constructor.
+- NB:  Previous versions of Angular (pre 1.0 RC) added prototype methods into the scope
+automatically, but this is no longer the case; all methods need to be added manually to
+the scope.</p>
+<p>Controller methods can also take arguments, as demonstrated in the following variation of the
+previous example.</p>
+<p>## Controller Method Arguments Example</p>
+<p>&lt;pre&gt;
+&lt;body ng-controller=&#8221;SpicyCtrl&#8221;&gt;</p>
+<blockquote>
+<div>&lt;input ng-model=&#8221;customSpice&#8221; value=&#8221;wasabi&#8221;&gt;
+&lt;button ng-click=&#8221;spicy(&#8216;chili&#8217;)&#8221;&gt;Chili&lt;/button&gt;
+&lt;button ng-click=&#8221;spicy(customSpice)&#8221;&gt;Custom spice&lt;/button&gt;
+&lt;p&gt;The food is {{spice}} spicy!&lt;/p&gt;</div></blockquote>
+<p>&lt;/body&gt;</p>
+<dl class="docutils">
+<dt>function SpicyCtrl($scope) {</dt>
+<dd><p class="first">$scope.spice = &#8216;very&#8217;;
+$scope.spicy = function(spice) {</p>
+<blockquote>
+<div>$scope.spice = spice;</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>}
+&lt;/pre&gt;</p>
+<p>Notice that the <cite>SpicyCtrl</cite> controller now defines just one method called <cite>spicy</cite>, which takes one
+argument called <cite>spice</cite>. The template then refers to this controller method and passes in a string
+constant <cite>&#8216;chili&#8217;</cite> in the binding for the first button and a model property <cite>spice</cite> (bound to an
+input box) in the second button.</p>
+<p>## Controller Inheritance Example</p>
+<p>Controller inheritance in Angular is based on <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$rootScope.Scope Scope} inheritance. Let&#8217;s
+have a look at an example:</p>
+<p>&lt;pre&gt;
+&lt;body ng-controller=&#8221;MainCtrl&#8221;&gt;</p>
+<blockquote>
+<div><p>&lt;p&gt;Good {{timeOfDay}}, {{name}}!&lt;/p&gt;
+&lt;div ng-controller=&#8221;ChildCtrl&#8221;&gt;</p>
+<blockquote>
+<div>&lt;p&gt;Good {{timeOfDay}}, {{name}}!&lt;/p&gt;
+&lt;p ng-controller=&#8221;BabyCtrl&#8221;&gt;Good {{timeOfDay}}, {{name}}!&lt;/p&gt;</div></blockquote>
+</div></blockquote>
+<p>&lt;/body&gt;</p>
+<dl class="docutils">
+<dt>function MainCtrl($scope) {</dt>
+<dd>$scope.timeOfDay = &#8216;morning&#8217;;
+$scope.name = &#8216;Nikki&#8217;;</dd>
+</dl>
+<p>}</p>
+<dl class="docutils">
+<dt>function ChildCtrl($scope) {</dt>
+<dd>$scope.name = &#8216;Mattie&#8217;;</dd>
+</dl>
+<p>}</p>
+<dl class="docutils">
+<dt>function BabyCtrl($scope) {</dt>
+<dd>$scope.timeOfDay = &#8216;evening&#8217;;
+$scope.name = &#8216;Gingerbreak Baby&#8217;;</dd>
+</dl>
+<p>}
+&lt;/pre&gt;</p>
+<p>Notice how we nested three <cite>ngController</cite> directives in our template. This template construct will
+result in 4 scopes being created for our view:</p>
+<ul class="simple">
+<li>The root scope</li>
+<li>The <cite>MainCtrl</cite> scope, which contains <cite>timeOfDay</cite> and <cite>name</cite> models</li>
+<li>The <cite>ChildCtrl</cite> scope, which shadows the <cite>name</cite> model from the previous scope and inherits the</li>
+</ul>
+<p><cite>timeOfDay</cite> model
+- The <cite>BabyCtrl</cite> scope, which shadows both the <cite>timeOfDay</cite> model defined in <cite>MainCtrl</cite> and <cite>name</cite>
+model defined in the ChildCtrl</p>
+<p>Inheritance works between controllers in the same way as it does with models. So in our previous
+examples, all of the models could be replaced with controller methods that return string values.</p>
+<p>Note: Standard prototypical inheritance between two controllers doesn&#8217;t work as one might expect,
+because as we mentioned earlier, controllers are not instantiated directly by Angular, but rather
+are applied to the scope object.</p>
+<p>## Testing Controllers</p>
+<p>Although there are many ways to test a controller, one of the best conventions, shown below,
+involves injecting the <cite>$rootScope</cite> and <cite>$controller</cite></p>
+<p>Controller Function:
+&lt;pre&gt;
+function myController($scope) {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>$scope.spices = [{&#8220;name&#8221;:&#8221;pasilla&#8221;, &#8220;spiciness&#8221;:&#8221;mild&#8221;},</dt>
+<dd>{&#8220;name&#8221;:&#8221;jalapeno&#8221;, &#8220;spiceiness&#8221;:&#8221;hot hot hot!&#8221;},
+{&#8220;name&#8221;:&#8221;habanero&#8221;, &#8220;spiceness&#8221;:&#8221;LAVA HOT!!&#8221;}];</dd>
+</dl>
+<p>$scope.spice = &#8220;habanero&#8221;;</p>
+</div></blockquote>
+<p>}
+&lt;/pre&gt;</p>
+<p>Controller Test:
+&lt;pre&gt;
+describe(&#8216;myController function&#8217;, function() {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>describe(&#8216;myController&#8217;, function() {</dt>
+<dd><p class="first">var scope;</p>
+<dl class="docutils">
+<dt>beforeEach(inject(function($rootScope, $controller) {</dt>
+<dd>scope = $rootScope.$new();
+var ctrl = $controller(myController, {$scope: scope});</dd>
+</dl>
+<p>}));</p>
+<dl class="docutils">
+<dt>it(&#8216;should create &#8220;spices&#8221; model with 3 spices&#8217;, function() {</dt>
+<dd>expect(scope.spices.length).toBe(3);</dd>
+</dl>
+<p>});</p>
+<dl class="docutils">
+<dt>it(&#8216;should set the default value of spice&#8217;, function() {</dt>
+<dd>expect(scope.spice).toBe(&#8216;habanero&#8217;);</dd>
+</dl>
+<p class="last">});</p>
+</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p>});
+&lt;/pre&gt;</p>
+<p>If you need to test a nested controller you need to create the same scope hierarchy
+in your test that exists in the DOM.</p>
+<p>&lt;pre&gt;
+describe(&#8216;state&#8217;, function() {</p>
+<blockquote>
+<div><p>var mainScope, childScope, babyScope;</p>
+<dl class="docutils">
+<dt>beforeEach(inject(function($rootScope, $controller) {</dt>
+<dd>mainScope = $rootScope.$new();
+var mainCtrl = $controller(MainCtrl, {$scope: mainScope});
+childScope = mainScope.$new();
+var childCtrl = $controller(ChildCtrl, {$scope: childScope});
+babyScope = childCtrl.$new();
+var babyCtrl = $controller(BabyCtrl, {$scope: babyScope});</dd>
+</dl>
+<p>}));</p>
+<dl class="docutils">
+<dt>it(&#8216;should have over and selected&#8217;, function() {</dt>
+<dd>expect(mainScope.timeOfDay).toBe(&#8216;morning&#8217;);
+expect(mainScope.name).toBe(&#8216;Nikki&#8217;);
+expect(childScope.timeOfDay).toBe(&#8216;morning&#8217;);
+expect(childScope.name).toBe(&#8216;Mattie&#8217;);
+expect(babyScope.timeOfDay).toBe(&#8216;evening&#8217;);
+expect(babyScope.name).toBe(&#8216;Gingerbreak Baby&#8217;);</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p>});
+&lt;/pre&gt;</p>
+<p>## Related Topics</p>
+<ul class="simple">
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.mvc About MVC in Angular}</li>
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.mvc.understanding_model Understanding the Model Component}</li>
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.mvc.understanding_view Understanding the View Component}</li>
+</ul>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/dev_guide.mvc.understanding_controller.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

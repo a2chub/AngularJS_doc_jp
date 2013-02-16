@@ -1,0 +1,291 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Developer Guide: Internet Explorer Compatibility
+&#64;description</p>
+<p># Overview</p>
+<p>This document describes the Internet Explorer (IE) idiosyncrasies when dealing with custom HTML
+attributes and tags. Read this document if you are planning on deploying your Angular application
+on IE v8.0 or earlier.</p>
+<p># Short Version</p>
+<p>To make your Angular application work on IE please make sure that:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>You polyfill JSON.stringify if necessary (IE7 will need this). You can use
+[JSON2](<a class="reference external" href="https://github.com/douglascrockford/JSON-js">https://github.com/douglascrockford/JSON-js</a>) or
+[JSON3](<a class="reference external" href="http://bestiejs.github.com/json3/">http://bestiejs.github.com/json3/</a>) polyfills for this.</li>
+<li>you <strong>do not</strong> use custom element tags such as <cite>&lt;ng:view&gt;</cite> (use the attribute version
+<cite>&lt;div ng-view&gt;</cite> instead), or</li>
+<li>if you <strong>do use</strong> custom element tags, then you must take these steps to make IE happy:</li>
+</ol>
+</div></blockquote>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;html xmlns:ng=&#8221;http://angularjs.org&#8221;&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;head&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;!&#8211;[if lte IE 8]&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;script&gt;</dt>
+<dd><p class="first">document.createElement(&#8216;ng-include&#8217;);
+document.createElement(&#8216;ng-pluralize&#8217;);
+document.createElement(&#8216;ng-view&#8217;);</p>
+<p class="last">// Optionally these for CSS
+document.createElement(&#8216;ng:include&#8217;);
+document.createElement(&#8216;ng:pluralize&#8217;);
+document.createElement(&#8216;ng:view&#8217;);</p>
+</dd>
+</dl>
+<p class="last">&lt;/script&gt;</p>
+</dd>
+</dl>
+<p class="last">&lt;![endif]&#8211;&gt;</p>
+</dd>
+</dl>
+<p>&lt;/head&gt;
+&lt;body&gt;</p>
+<blockquote>
+<div>...</div></blockquote>
+<p class="last">&lt;/body&gt;</p>
+</dd>
+</dl>
+<p class="last">&lt;/html&gt;</p>
+</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>The <strong>important</strong> parts are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>xmlns:ng</cite> - <em>namespace</em> - you need one namespace for each custom tag you are planning on
+using.</li>
+<li><cite>document.createElement(yourTagName)</cite> - <em>creation of custom tag names</em> - Since this is an
+issue only for older version of IE you need to load it conditionally. For each tag which does
+not have namespace and which is not defined in HTML you need to pre-declare it to make IE
+happy.</li>
+</ul>
+</div></blockquote>
+<p># Long Version</p>
+<p>IE has issues with element tag names which are not standard HTML tag names. These fall into two
+categories, and each category has its own fix.</p>
+<blockquote>
+<div><ul class="simple">
+<li>If the tag name starts with <cite>my:</cite> prefix than it is considered an XML namespace and must
+have corresponding namespace declaration on <cite>&lt;html xmlns:my=&#8221;ignored&#8221;&gt;</cite></li>
+<li>If the tag has no <cite>:</cite> but it is not a standard HTML tag, then it must be pre-created using
+<cite>document.createElement(&#8216;my-tag&#8217;)</cite></li>
+<li>If you are planning on styling the custom tag with CSS selectors, then it must be
+pre-created using <cite>document.createElement(&#8216;my-tag&#8217;)</cite> regardless of XML namespace.</li>
+</ul>
+</div></blockquote>
+<p>## The Good News</p>
+<p>The good news is that these restrictions only apply to element tag names, and not to element
+attribute names. So this requires no special handling in IE: <cite>&lt;div my-tag your:tag&gt;&lt;/div&gt;</cite>.</p>
+<p>## What happens if I fail to do this?</p>
+<p>Suppose you have HTML with unknown tag <cite>mytag</cite> (this could also be <cite>my:tag</cite> or <cite>my-tag</cite> with same
+result):</p>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;html&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;body&gt;</dt>
+<dd>&lt;mytag&gt;some text&lt;/mytag&gt;</dd>
+</dl>
+<p class="last">&lt;/body&gt;</p>
+</dd>
+</dl>
+<p class="last">&lt;/html&gt;</p>
+</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>It should parse into the following DOM:</p>
+<p>&lt;pre&gt;
+#document</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>+- HTML</dt>
+<dd><dl class="first last docutils">
+<dt>+- BODY</dt>
+<dd><dl class="first last docutils">
+<dt>+- mytag</dt>
+<dd>+- #text: some text</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<p>&lt;/pre&gt;</p>
+<p>The expected behavior is that the <cite>BODY</cite> element has a child element <cite>mytag</cite>, which in turn has
+the text <cite>some text</cite>.</p>
+<p>But this is not what IE does (if the above fixes are not included):</p>
+<p>&lt;pre&gt;
+#document</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>+- HTML</dt>
+<dd><dl class="first last docutils">
+<dt>+- BODY</dt>
+<dd>+- mytag
++- #text: some text
++- /mytag</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<p>&lt;/pre&gt;</p>
+<p>In IE, the behavior is that the <cite>BODY</cite> element has three children:</p>
+<blockquote>
+<div><p>1. A self closing <cite>mytag</cite>. Example of self closing tag is <cite>&lt;br/&gt;</cite>. The trailing <cite>/</cite> is optional,
+but the <cite>&lt;br&gt;</cite> tag is not allowed to have any children, and browsers consider <cite>&lt;br&gt;some
+text&lt;/br&gt;</cite> as three siblings not a <cite>&lt;br&gt;</cite> with <cite>some text</cite> as child.</p>
+<ol class="arabic simple" start="2">
+<li>A text node with <cite>some text</cite>. This should have been a child of <cite>mytag</cite> above, not a sibling.</li>
+</ol>
+<p>3. A corrupt self closing <cite>/mytag</cite>. This is corrupt since element names are not allowed to have
+the <cite>/</cite> character. Furthermore this closing element should not be part of the DOM since it is
+only used to delineate the structure of the DOM.</p>
+</div></blockquote>
+<p>## CSS Styling of Custom Tag Names</p>
+<p>To make CSS selectors work with custom elements, the custom element name must be pre-created with
+<cite>document.createElement(&#8216;my-tag&#8217;)</cite> regardless of XML namespace.</p>
+<dl class="docutils">
+<dt>&lt;pre&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;html xmlns:ng=&#8221;needed for ng: namespace&#8221;&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;head&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;!&#8211;[if lte IE 8]&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;script&gt;</dt>
+<dd><p class="first">// needed to make ng-include parse properly
+document.createElement(&#8216;ng-include&#8217;);</p>
+<p class="last">// needed to enable CSS reference
+document.createElement(&#8216;ng:view&#8217;);</p>
+</dd>
+</dl>
+<p class="last">&lt;/script&gt;</p>
+</dd>
+</dl>
+<p>&lt;![endif]&#8211;&gt;
+&lt;style&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>ng\:view {</dt>
+<dd>display: block;
+border: 1px solid red;</dd>
+</dl>
+<p>}</p>
+<dl class="docutils">
+<dt>ng-include {</dt>
+<dd>display: block;
+border: 1px solid blue;</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p class="last">&lt;/style&gt;</p>
+</dd>
+</dl>
+<p>&lt;/head&gt;
+&lt;body&gt;</p>
+<blockquote>
+<div>&lt;ng:view&gt;&lt;/ng:view&gt;
+&lt;ng-include&gt;&lt;/ng-include&gt;
+...</div></blockquote>
+<p class="last">&lt;/body&gt;</p>
+</dd>
+</dl>
+<p class="last">&lt;/html&gt;</p>
+</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/ie.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

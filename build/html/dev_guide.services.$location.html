@@ -1,0 +1,740 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Developer Guide: Angular Services: Using $location
+&#64;description</p>
+<p># What does it do?</p>
+<p>The <cite>$location</cite> service parses the URL in the browser address bar (based on the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+<a class="reference external" href="https://developer.mozilla.org/en/window.location">https://developer.mozilla.org/en/window.location</a> window.location}) and makes the URL available to
+your application. Changes to the URL in the address bar are reflected into $location service and
+changes to $location are reflected into the browser address bar.</p>
+<p><strong>The $location service:</strong></p>
+<ul class="simple">
+<li>Exposes the current URL in the browser address bar, so you can
+- Watch and observe the URL.
+- Change the URL.</li>
+<li>Synchronizes the URL with the browser when the user
+- Changes the address bar.
+- Clicks the back or forward button (or clicks a History link).
+- Clicks on a link.</li>
+<li>Represents the URL object as a set of methods (protocol, host, port, path, search, hash).</li>
+</ul>
+<p>## Comparing $location to window.location</p>
+<p>&lt;table class=&#8221;table&#8221;&gt;
+&lt;thead&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;th class=&#8221;empty-corner-lt&#8221;&gt;&lt;/th&gt;
+&lt;th&gt;window.location&lt;/th&gt;
+&lt;th&gt;$location service&lt;/th&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+</div></blockquote>
+<p>&lt;/thead&gt;
+&lt;tbody&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td class=&#8221;head&#8221;&gt;purpose&lt;/td&gt;
+&lt;td&gt;allow read/write access to the current browser location&lt;/td&gt;
+&lt;td&gt;same&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td class=&#8221;head&#8221;&gt;API&lt;/td&gt;
+&lt;td&gt;exposes &#8220;raw&#8221; object with properties that can be directly modified&lt;/td&gt;
+&lt;td&gt;exposes jQuery-style getters and setters&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td class=&#8221;head&#8221;&gt;integration with angular application life-cycle&lt;/td&gt;
+&lt;td&gt;none&lt;/td&gt;
+&lt;td&gt;knows about all internal life-cycle phases, integrates with $watch, ...&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td class=&#8221;head&#8221;&gt;seamless integration with HTML5 API&lt;/td&gt;
+&lt;td&gt;no&lt;/td&gt;
+&lt;td&gt;yes (with a fallback for legacy browsers)&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td class=&#8221;head&#8221;&gt;aware of docroot/context from which the application is loaded&lt;/td&gt;
+&lt;td&gt;no - window.location.path returns &#8220;/docroot/actual/path&#8221;&lt;/td&gt;
+&lt;td&gt;yes - $location.path() returns &#8220;/actual/path&#8221;&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+</div></blockquote>
+<p>&lt;/tbody&gt;
+&lt;/table&gt;</p>
+<p>## When should I use $location?
+Any time your application needs to react to a change in the current URL or if you want to change
+the current URL in the browser.</p>
+<p>## What does it not do?
+It does not cause a full page reload when the browser URL is changed. To reload the page after
+changing the URL, use the lower-level API, <cite>$window.location.href</cite>.</p>
+<p># General overview of the API</p>
+<p>The <cite>$location</cite> service can behave differently, depending on the configuration that was provided to
+it when it was instantiated. The default configuration is suitable for many applications, for
+others customizing the configuration can enable new features.</p>
+<p>Once the <cite>$location</cite> service is instantiated, you can interact with it via jQuery-style getter and
+setter methods that allow you to get or change the current URL in the browser.</p>
+<p>## $location service configuration</p>
+<p>To configure the <cite>$location</cite> service, retrieve the
+<a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$locationProvider $locationProvider} and set the parameters as follows:</p>
+<ul class="simple">
+<li><strong>html5Mode(mode)</strong>: {boolean}&lt;br /&gt;
+<cite>true</cite> - see HTML5 mode&lt;br /&gt;
+<cite>false</cite> - see Hashbang mode&lt;br /&gt;
+default: <cite>false</cite></li>
+<li><strong>hashPrefix(prefix)</strong>: {string}&lt;br /&gt;
+prefix used for Hashbang URLs (used in Hashbang mode or in legacy browser in Html5 mode)&lt;br /&gt;
+default: <cite>&#8216;!&#8217;</cite></li>
+</ul>
+<p>### Example configuration
+&lt;pre&gt;
+$locationProvider.html5Mode(true).hashPrefix(&#8216;!&#8217;);
+&lt;/pre&gt;</p>
+<p>## Getter and setter methods</p>
+<p><cite>$location</cite> service provides getter methods for read-only parts of the URL (absUrl, protocol, host,
+port) and getter / setter methods for url, path, search, hash:
+&lt;pre&gt;
+// get the current path
+$location.path();</p>
+<p>// change the path
+$location.path(&#8216;/newValue&#8217;)
+&lt;/pre&gt;</p>
+<p>All of the setter methods return the same <cite>$location</cite> object to allow chaining. For example, to
+change multiple segments in one go, chain setters like this:
+&lt;pre&gt;$location.path(&#8216;/newValue&#8217;).search({key: value});&lt;/pre&gt;</p>
+<p>There is a special <cite>replace</cite> method which can be used to tell the $location service that the next
+time the $location service is synced with the browser, the last history record should be replaced
+instead of creating a new one. This is useful when you want to implement redirection, which would
+otherwise break the back button (navigating back would retrigger the redirection). To change the
+current URL without creating a new browser history record you can call:
+&lt;pre&gt;</p>
+<blockquote>
+<div>$location.path(&#8216;/someNewPath&#8217;);
+$location.replace();
+// or you can chain these as: $location.path(&#8216;/someNewPath&#8217;).replace();</div></blockquote>
+<p>&lt;/pre&gt;</p>
+<p>Note that the setters don&#8217;t update <cite>window.location</cite> immediately. Instead, the <cite>$location</cite> service is
+aware of the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$rootScope.Scope scope} life-cycle and coalesces multiple <cite>$location</cite>
+mutations into one &#8220;commit&#8221; to the <cite>window.location</cite> object during the scope <cite>$digest</cite> phase. Since
+multiple changes to the $location&#8217;s state will be pushed to the browser as a single change, it&#8217;s
+enough to call the <cite>replace()</cite> method just once to make the entire &#8220;commit&#8221; a replace operation
+rather than an addition to the browser history. Once the browser is updated, the $location service
+resets the flag set by <cite>replace()</cite> method and future mutations will create new history records,
+unless <cite>replace()</cite> is called again.</p>
+<p>### Setters and character encoding
+You can pass special characters to <cite>$location</cite> service and it will encode them according to rules
+specified in <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> <a class="reference external" href="http://www.ietf.org/rfc/rfc3986.txt">http://www.ietf.org/rfc/rfc3986.txt</a> RFC 3986}. When you access the methods:</p>
+<ul class="simple">
+<li>All values that are passed to <cite>$location</cite> setter methods, <cite>path()</cite>, <cite>search()</cite>, <cite>hash()</cite>, are</li>
+</ul>
+<p>encoded.
+- Getters (calls to methods without parameters) return decoded values for the following methods
+<cite>path()</cite>, <cite>search()</cite>, <cite>hash()</cite>.
+- When you call the <cite>absUrl()</cite> method, the returned value is a full url with its segments encoded.
+- When you call the <cite>url()</cite> method, the returned value is path, search and hash, in the form
+<cite>/path?search=a&amp;b=c#hash</cite>. The segments are encoded as well.</p>
+<p># Hashbang and HTML5 Modes</p>
+<p><cite>$location</cite> service has two configuration modes which control the format of the URL in the browser
+address bar: <strong>Hashbang mode</strong> (the default) and the <strong>HTML5 mode</strong> which is based on using the
+HTML5 <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> <a class="reference external" href="http://www.w3.org/TR/html5/history.html">http://www.w3.org/TR/html5/history.html</a> History API}. Applications use the same API in
+both modes and the <cite>$location</cite> service will work with appropriate URL segments and browser APIs to
+facilitate the browser URL change and history management.</p>
+<p>&lt;img src=&#8221;img/guide/hashbang_vs_regular_url.jpg&#8221;&gt;</p>
+<p>&lt;table class=&#8221;table&#8221;&gt;
+&lt;thead&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;th class=&#8221;empty-corner-lt&#8221;&gt;&lt;/th&gt;
+&lt;th&gt;Hashbang mode&lt;/th&gt;
+&lt;th&gt;HTML5 mode&lt;/th&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+</div></blockquote>
+<p>&lt;/thead&gt;
+&lt;tbody&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td class=&#8221;head&#8221;&gt;configuration&lt;/td&gt;
+&lt;td&gt;the default&lt;/td&gt;
+&lt;td&gt;{ html5Mode: true }&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td class=&#8221;head&#8221;&gt;URL format&lt;/td&gt;
+&lt;td&gt;hashbang URLs in all browsers&lt;/td&gt;
+&lt;td&gt;regular URLs in modern browser, hashbang URLs in old browser&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td class=&#8221;head&#8221;&gt;&amp;lt;a href=&#8221;&#8220;&amp;gt; link rewriting&lt;/td&gt;
+&lt;td&gt;no&lt;/td&gt;
+&lt;td&gt;yes&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td class=&#8221;head&#8221;&gt;requires server-side configuration&lt;/td&gt;
+&lt;td&gt;no&lt;/td&gt;
+&lt;td&gt;yes&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+</div></blockquote>
+<p>&lt;/tbody&gt;
+&lt;/table&gt;</p>
+<p>## Hashbang mode (default mode)</p>
+<p>In this mode, <cite>$location</cite> uses Hashbang URLs in all browsers.</p>
+<p>### Example</p>
+<p>&lt;pre&gt;
+it(&#8216;should show example&#8217;, inject(</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>function($locationProvider) {</dt>
+<dd>$locationProvider.html5Mode(false);
+$locationProvider.hashPrefix = &#8216;!&#8217;;</dd>
+</dl>
+<p>},
+function($location) {</p>
+<blockquote>
+<div><p>// open <a class="reference external" href="http://host.com/base/index.html#!/a">http://host.com/base/index.html#!/a</a>
+$location.absUrl() == &#8216;<a class="reference external" href="http://host.com/base/index.html#!/a">http://host.com/base/index.html#!/a</a>&#8216;
+$location.path() == &#8216;/a&#8217;</p>
+<p>$location.path(&#8216;/foo&#8217;)
+$location.absUrl() == &#8216;<a class="reference external" href="http://host.com/base/index.html#!/foo">http://host.com/base/index.html#!/foo</a>&#8216;</p>
+<p>$location.search() == {}
+$location.search({a: &#8216;b&#8217;, c: true});
+$location.absUrl() == &#8216;<a class="reference external" href="http://host.com/base/index.html#!/foo">http://host.com/base/index.html#!/foo</a>?a=b&amp;c&#8217;</p>
+<p>$location.path(&#8216;/new&#8217;).search(&#8216;x=y&#8217;);
+$location.absUrl() == &#8216;<a class="reference external" href="http://host.com/base/index.html#!/new">http://host.com/base/index.html#!/new</a>?x=y&#8217;</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>));
+&lt;/pre&gt;</p>
+<p>### Crawling your app</p>
+<p>To allow indexing of your AJAX application, you have to add special meta tag in the head section of
+your document:
+&lt;pre&gt;&lt;meta name=&#8221;fragment&#8221; content=&#8221;!&#8221; /&gt;&lt;/pre&gt;</p>
+<p>This will cause crawler bot to request links with <cite>_escaped_fragment_</cite> param so that your server
+can recognize the crawler and serve a HTML snapshots. For more information about this technique,
+see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> <a class="reference external" href="http://code.google.com/web/ajaxcrawling/docs/specification.html">http://code.google.com/web/ajaxcrawling/docs/specification.html</a> Making AJAX Applications
+Crawlable}.</p>
+<p>## HTML5 mode</p>
+<p>In HTML5 mode, the <cite>$location</cite> service getters and setters interact with the browser URL address
+through the HTML5 history API, which allows for use of regular URL path and search segments,
+instead of their hashbang equivalents. If the HTML5 History API is not supported by a browser, the
+<cite>$location</cite> service will fall back to using the hashbang URLs automatically. This frees you from
+having to worry about whether the browser displaying your app supports the history API  or not; the
+<cite>$location</cite> service transparently uses the best available option.</p>
+<ul class="simple">
+<li>Opening a regular URL in a legacy browser -&gt; redirects to a hashbang URL</li>
+<li>Opening hashbang URL in a modern browser -&gt; rewrites to a regular URL</li>
+</ul>
+<p>### Example</p>
+<p>&lt;pre&gt;
+it(&#8216;should show example&#8217;, inject(</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>function($locationProvider) {</dt>
+<dd>$locationProvider.html5Mode(true);
+$locationProvider.hashPrefix = &#8216;!&#8217;;</dd>
+</dl>
+<p>},
+function($location) {</p>
+<blockquote>
+<div><p>// in browser with HTML5 history support:
+// open <a class="reference external" href="http://host.com/#!/a">http://host.com/#!/a</a> -&gt; rewrite to <a class="reference external" href="http://host.com/a">http://host.com/a</a>
+// (replacing the <a class="reference external" href="http://host.com/#!/a">http://host.com/#!/a</a> history record)
+$location.path() == &#8216;/a&#8217;</p>
+<p>$location.path(&#8216;/foo&#8217;);
+$location.absUrl() == &#8216;<a class="reference external" href="http://host.com/foo">http://host.com/foo</a>&#8216;</p>
+<p>$location.search() == {}
+$location.search({a: &#8216;b&#8217;, c: true});
+$location.absUrl() == &#8216;<a class="reference external" href="http://host.com/foo?a=b&amp;c">http://host.com/foo?a=b&amp;c</a>&#8216;</p>
+<p>$location.path(&#8216;/new&#8217;).search(&#8216;x=y&#8217;);
+$location.url() == &#8216;new?x=y&#8217;
+$location.absUrl() == &#8216;<a class="reference external" href="http://host.com/new?x=y">http://host.com/new?x=y</a>&#8216;</p>
+<p>// in browser without html5 history support:
+// open <a class="reference external" href="http://host.com/new?x=y">http://host.com/new?x=y</a> -&gt; redirect to <a class="reference external" href="http://host.com/#!/new">http://host.com/#!/new</a>?x=y
+// (again replacing the <a class="reference external" href="http://host.com/new?x=y">http://host.com/new?x=y</a> history item)
+$location.path() == &#8216;/new&#8217;
+$location.search() == {x: &#8216;y&#8217;}</p>
+<p>$location.path(&#8216;/foo/bar&#8217;);
+$location.path() == &#8216;/foo/bar&#8217;
+$location.url() == &#8216;/foo/bar?x=y&#8217;
+$location.absUrl() == &#8216;<a class="reference external" href="http://host.com/#!/foo/bar">http://host.com/#!/foo/bar</a>?x=y&#8217;</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>));
+&lt;/pre&gt;</p>
+<p>### Fallback for legacy browsers</p>
+<p>For browsers that support the HTML5 history API, <cite>$location</cite> uses the HTML5 history API to write
+path and search. If the history API is not supported by a browser, <cite>$location</cite> supplies a Hasbang
+URL. This frees you from having to worry about whether the browser viewing your app supports the
+history API  or not; the <cite>$location</cite> service makes this transparent to you.</p>
+<p>### Html link rewriting</p>
+<p>When you use HTML5 history API mode, you will need different links in different browsers, but all you
+have to do is specify regular URL links, such as: <cite>&lt;a href=&#8221;/some?foo=bar&#8221;&gt;link&lt;/a&gt;</cite></p>
+<p>When a user clicks on this link,</p>
+<ul class="simple">
+<li>In a legacy browser, the URL changes to <cite>/index.html#!/some?foo=bar</cite></li>
+<li>In a modern browser, the URL changes to <cite>/some?foo=bar</cite></li>
+</ul>
+<p>In cases like the following, links are not rewritten; instead, the browser will perform a full page
+reload to the original link.</p>
+<ul class="simple">
+<li>Links that contain <cite>target</cite> element&lt;br&gt;
+Example: <cite>&lt;a href=&#8221;/ext/link?a=b&#8221; target=&#8221;_self&#8221;&gt;link&lt;/a&gt;</cite></li>
+<li>Absolute links that go to a different domain&lt;br&gt;
+Example: <cite>&lt;a href=&#8221;http://angularjs.org/&#8221;&gt;link&lt;/a&gt;</cite></li>
+<li>Links starting with &#8216;/&#8217; that lead to a different base path when base is defined&lt;br&gt;
+Example: <cite>&lt;a href=&#8221;/not-my-base/link&#8221;&gt;link&lt;/a&gt;</cite></li>
+</ul>
+<p>### Server side</p>
+<p>Using this mode requires URL rewriting on server side, basically you have to rewrite all your links
+to entry point of your application (e.g. index.html)</p>
+<p>### Crawling your app</p>
+<p>If you want your AJAX application to be indexed by web crawlers, you will need to add the following
+meta tag to the HEAD section of your document:
+&lt;pre&gt;&lt;meta name=&#8221;fragment&#8221; content=&#8221;!&#8221; /&gt;&lt;/pre&gt;</p>
+<p>This statement causes a crawler to request links with an empty <cite>_escaped_fragment_</cite> parameter so that
+your server can recognize the crawler and serve it HTML snapshots. For more information about this
+technique, see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> <a class="reference external" href="http://code.google.com/web/ajaxcrawling/docs/specification.html">http://code.google.com/web/ajaxcrawling/docs/specification.html</a> Making AJAX
+Applications Crawlable}.</p>
+<p>### Relative links</p>
+<p>Be sure to check all relative links, images, scripts etc. You must either specify the url base in
+the head of your main html file (<cite>&lt;base href=&#8221;/my-base&#8221;&gt;</cite>) or you must use absolute urls
+(starting with <cite>/</cite>) everywhere because relative urls will be resolved to absolute urls using the
+initial absolute url of the document, which is often different from the root of the application.</p>
+<p>Running Angular apps with the History API enabled from document root is strongly encouraged as it
+takes care of all relative link issues.</p>
+<p>### Sending links among different browsers</p>
+<p>Because of rewriting capability in HTML5 mode, your users will be able to open regular url links in
+legacy browsers and hashbang links in modern browser:</p>
+<ul class="simple">
+<li>Modern browser will rewrite hashbang URLs to regular URLs.</li>
+<li>Older browsers will redirect regular URLs to hashbang URLs.</li>
+</ul>
+<p>### Example</p>
+<p>Here you can see two <cite>$location</cite> instances, both in <strong>Html5 mode</strong>, but on different browsers, so
+that you can see the differences. These <cite>$location</cite> services are connected to a fake browsers. Each
+input represents address bar of the browser.</p>
+<p>Note that when you type hashbang url into first browser (or vice versa) it doesn&#8217;t rewrite /
+redirect to regular / hashbang url, as this conversion happens only during parsing the initial URL
+= on page reload.</p>
+<p>In this examples we use <cite>&lt;base href=&#8221;/base/index.html&#8221; /&gt;</cite>
+&lt;doc:example&gt;
+&lt;doc:source source=&#8221;false&#8221;&gt;</p>
+<dl class="docutils">
+<dt>&lt;div ng-non-bindable class=&#8221;html5-hashbang-example&#8221;&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;div id=&#8221;html5-mode&#8221; ng-controller=&#8221;Html5Cntl&#8221;&gt;</dt>
+<dd>&lt;h3&gt;Browser with History API&lt;/h3&gt;
+&lt;div ng-address-bar browser=&#8221;html5&#8221;&gt;&lt;/div&gt;&lt;br&gt;&lt;br&gt;
+$location.protocol() = {{$location.protocol()}}&lt;br&gt;
+$location.host() = {{$location.host()}}&lt;br&gt;
+$location.port() = {{$location.port()}}&lt;br&gt;
+$location.path() = {{$location.path()}}&lt;br&gt;
+$location.search() = {{$location.search()}}&lt;br&gt;
+$location.hash() = {{$location.hash()}}&lt;br&gt;
+&lt;a href=&#8221;<a class="reference external" href="http://www.host.com/base/first?a=b">http://www.host.com/base/first?a=b</a>&#8220;&gt;/base/first?a=b&lt;/a&gt; |
+&lt;a href=&#8221;<a class="reference external" href="http://www.host.com/base/sec/ond?flag#hash">http://www.host.com/base/sec/ond?flag#hash</a>&#8220;&gt;sec/ond?flag#hash&lt;/a&gt; |
+&lt;a href=&#8221;/other-base/another?search&#8221;&gt;external&lt;/a&gt;</dd>
+</dl>
+<p>&lt;/div&gt;</p>
+<dl class="docutils">
+<dt>&lt;div id=&#8221;hashbang-mode&#8221; ng-controller=&#8221;HashbangCntl&#8221;&gt;</dt>
+<dd>&lt;h3&gt;Browser without History API&lt;/h3&gt;
+&lt;div ng-address-bar browser=&#8221;hashbang&#8221;&gt;&lt;/div&gt;&lt;br&gt;&lt;br&gt;
+$location.protocol() = {{$location.protocol()}}&lt;br&gt;
+$location.host() = {{$location.host()}}&lt;br&gt;
+$location.port() = {{$location.port()}}&lt;br&gt;
+$location.path() = {{$location.path()}}&lt;br&gt;
+$location.search() = {{$location.search()}}&lt;br&gt;
+$location.hash() = {{$location.hash()}}&lt;br&gt;
+&lt;a href=&#8221;<a class="reference external" href="http://www.host.com/base/first?a=b">http://www.host.com/base/first?a=b</a>&#8220;&gt;/base/first?a=b&lt;/a&gt; |
+&lt;a href=&#8221;<a class="reference external" href="http://www.host.com/base/sec/ond?flag#hash">http://www.host.com/base/sec/ond?flag#hash</a>&#8220;&gt;sec/ond?flag#hash&lt;/a&gt; |
+&lt;a href=&#8221;/other-base/another?search&#8221;&gt;external&lt;/a&gt;</dd>
+</dl>
+<p class="last">&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>&lt;/div&gt;</p>
+<dl class="docutils">
+<dt>&lt;script&gt;</dt>
+<dd><dl class="first docutils">
+<dt>function FakeBrowser(initUrl, baseHref) {</dt>
+<dd><dl class="first docutils">
+<dt>this.onUrlChange = function(fn) {</dt>
+<dd>this.urlChange = fn;</dd>
+</dl>
+<p>};</p>
+<dl class="docutils">
+<dt>this.url = function() {</dt>
+<dd>return initUrl;</dd>
+</dl>
+<p>};</p>
+<dl class="docutils">
+<dt>this.defer = function(fn, delay) {</dt>
+<dd>setTimeout(function() { fn(); }, delay || 0);</dd>
+</dl>
+<p>};</p>
+<dl class="docutils">
+<dt>this.baseHref = function() {</dt>
+<dd>return baseHref;</dd>
+</dl>
+<p>};</p>
+<p class="last">this.notifyWhenOutstandingRequests = angular.noop;</p>
+</dd>
+</dl>
+<p>}</p>
+<dl class="docutils">
+<dt>var browsers = {</dt>
+<dd>html5: new FakeBrowser(&#8216;<a class="reference external" href="http://www.host.com/base/path?a=b#h">http://www.host.com/base/path?a=b#h</a>&#8216;, &#8216;/base/index.html&#8217;),
+hashbang: new FakeBrowser(&#8216;<a class="reference external" href="http://www.host.com/base/index.html#!/path">http://www.host.com/base/index.html#!/path</a>?a=b#h&#8217;, &#8216;/base/index.html&#8217;)</dd>
+</dl>
+<p>};</p>
+<dl class="docutils">
+<dt>function Html5Cntl($scope, $location) {</dt>
+<dd>$scope.$location = $location;</dd>
+</dl>
+<p>}</p>
+<dl class="docutils">
+<dt>function HashbangCntl($scope, $location) {</dt>
+<dd>$scope.$location = $location;</dd>
+</dl>
+<p>}</p>
+<dl class="docutils">
+<dt>function initEnv(name) {</dt>
+<dd><p class="first">var root = angular.element(document.getElementById(name + &#8216;-mode&#8217;));
+angular.bootstrap(root, [function($compileProvider, $locationProvider, $provide){</p>
+<blockquote>
+<div><p>$locationProvider.html5Mode(true).hashPrefix(&#8216;!&#8217;);</p>
+<p>$provide.value(&#8216;$browser&#8217;, browsers[name]);
+$provide.value(&#8216;$document&#8217;, root);
+$provide.value(&#8216;$sniffer&#8217;, {history: name == &#8216;html5&#8217;});</p>
+<dl class="docutils">
+<dt>$compileProvider.directive(&#8216;ngAddressBar&#8217;, function() {</dt>
+<dd><dl class="first docutils">
+<dt>return function(scope, elm, attrs) {</dt>
+<dd><dl class="first docutils">
+<dt>var browser = browsers[attrs.browser],</dt>
+<dd>input = angular.element(&#8216;&lt;input type=&#8221;text&#8221;&gt;&#8217;).val(browser.url()),
+delay;</dd>
+<dt>input.bind(&#8216;keypress keyup keydown&#8217;, function() {</dt>
+<dd><dl class="first docutils">
+<dt>if (!delay) {</dt>
+<dd>delay = setTimeout(fireUrlChange, 250);</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>});</p>
+<dl class="docutils">
+<dt>browser.url = function(url) {</dt>
+<dd>return input.val(url);</dd>
+</dl>
+<p>};</p>
+<p>elm.append(&#8216;Address: &#8216;).append(input);</p>
+<dl class="docutils">
+<dt>function fireUrlChange() {</dt>
+<dd>delay = null;
+browser.urlChange(input.val());</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p class="last">};</p>
+</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p>}]);
+root.bind(&#8216;click&#8217;, function(e) {</p>
+<blockquote>
+<div>e.stopPropagation();</div></blockquote>
+<p class="last">});</p>
+</dd>
+</dl>
+<p>}</p>
+<p class="last">initEnv(&#8216;html5&#8217;);
+initEnv(&#8216;hashbang&#8217;);</p>
+</dd>
+</dl>
+<p>&lt;/script&gt;</p>
+<p>&lt;/doc:source&gt;
+&lt;/doc:example&gt;</p>
+<p># Caveats</p>
+<p>## Page reload navigation</p>
+<p>The <cite>$location</cite> service allows you to change only the URL; it does not allow you to reload the
+page. When you need to change the URL and reload the page or navigate to a different page, please
+use a lower level API, <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$window $window.location.href}.</p>
+<p>## Using $location outside of the scope life-cycle</p>
+<p><cite>$location</cite> knows about Angular&#8217;s <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$rootScope.Scope scope} life-cycle. When a URL changes in
+the browser it updates the <cite>$location</cite> and calls <cite>$apply</cite> so that all $watchers / $observers are
+notified.
+When you change the <cite>$location</cite> inside the <cite>$digest</cite> phase everything is ok; <cite>$location</cite> will
+propagate this change into browser and will notify all the $watchers / $observers.
+When you want to change the <cite>$location</cite> from outside Angular (for example, through a DOM Event or
+during testing) - you must call <cite>$apply</cite> to propagate the changes.</p>
+<p>## $location.path() and ! or / prefixes</p>
+<p>A path should always begin with forward slash (<cite>/</cite>); the <cite>$location.path()</cite> setter will add the
+forward slash if it is missing.</p>
+<p>Note that the <cite>!</cite> prefix in the hashbang mode is not part of <cite>$location.path()</cite>; it is actually
+hashPrefix.</p>
+<p># Testing with the $location service</p>
+<p>When using <cite>$location</cite> service during testing, you are outside of the angular&#8217;s <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.$rootScope.Scope scope} life-cycle. This means it&#8217;s your responsibility to call <cite>scope.$apply()</cite>.</p>
+<p>&lt;pre&gt;
+describe(&#8216;serviceUnderTest&#8217;, function() {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>beforeEach(module(function($provide) {</dt>
+<dd><dl class="first docutils">
+<dt>$provide.factory(&#8216;serviceUnderTest&#8217;, function($location){</dt>
+<dd>// whatever it does...</dd>
+</dl>
+<p class="last">});</p>
+</dd>
+</dl>
+<p>});</p>
+<dl class="docutils">
+<dt>it(&#8216;should...&#8217;, inject(function($location, $rootScope, serviceUnderTest) {</dt>
+<dd><p class="first">$location.path(&#8216;/new/path&#8217;);
+$rootScope.$apply();</p>
+<p class="last">// test whatever the service should do...</p>
+</dd>
+</dl>
+<p>}));</p>
+</div></blockquote>
+<p>});
+&lt;/pre&gt;</p>
+<p># Migrating from earlier AngularJS releases</p>
+<p>In earlier releases of Angular, <cite>$location</cite> used <cite>hashPath</cite> or <cite>hashSearch</cite> to process path and
+search methods. With this release, the <cite>$location</cite> service processes path and search methods and
+then uses the information it obtains to compose hashbang URLs (such as
+<cite>http://server.com/#!/path?search=a</cite>), when necessary.</p>
+<p>## Changes to your code</p>
+<dl class="docutils">
+<dt>&lt;table class=&#8221;table&#8221;&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;thead&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;tr class=&#8221;head&#8221;&gt;</dt>
+<dd>&lt;th&gt;Navigation inside the app&lt;/th&gt;
+&lt;th&gt;Change to&lt;/th&gt;</dd>
+</dl>
+<p class="last">&lt;/tr&gt;</p>
+</dd>
+</dl>
+<p>&lt;/thead&gt;</p>
+<dl class="last docutils">
+<dt>&lt;tbody&gt;</dt>
+<dd><dl class="first last docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td&gt;$location.href = value&lt;br /&gt;$location.hash = value&lt;br /&gt;$location.update(value)&lt;br</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>/&gt;$location.updateHash(value)&lt;/td&gt;</dt>
+<dd><blockquote class="first">
+<div>&lt;td&gt;$location.path(path).search(search)&lt;/td&gt;</div></blockquote>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td&gt;$location.hashPath = path&lt;/td&gt;
+&lt;td&gt;$location.path(path)&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td&gt;$location.hashSearch = search&lt;/td&gt;
+&lt;td&gt;$location.search(search)&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr class=&#8221;head&#8221;&gt;</dt>
+<dd>&lt;td&gt;Navigation outside the app&lt;/td&gt;
+&lt;td&gt;Use lower level API&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td&gt;$location.href = value&lt;br /&gt;$location.update(value)&lt;/td&gt;
+&lt;td&gt;$window.location.href = value&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td&gt;$location[protocol | host | port | path | search]&lt;/td&gt;
+&lt;td&gt;$window.location[protocol | host | port | path | search]&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr class=&#8221;head&#8221;&gt;</dt>
+<dd>&lt;td&gt;Read access&lt;/td&gt;
+&lt;td&gt;Change to&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td&gt;$location.hashPath&lt;/td&gt;
+&lt;td&gt;$location.path()&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td&gt;$location.hashSearch&lt;/td&gt;
+&lt;td&gt;$location.search()&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+<dl class="last docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td&gt;$location.href&lt;br /&gt;$location.protocol&lt;br /&gt;$location.host&lt;br /&gt;$location.port&lt;br</dd>
+</dl>
+</dd>
+<dt>/&gt;$location.hash&lt;/td&gt;</dt>
+<dd>&lt;td&gt;$location.absUrl()&lt;br /&gt;$location.protocol()&lt;br /&gt;$location.host()&lt;br /&gt;$location.port()&lt;br</dd>
+<dt>/&gt;$location.path() + $location.search()&lt;/td&gt;</dt>
+<dd><blockquote class="first">
+<div><p>&lt;/tr&gt;</p>
+<dl class="docutils">
+<dt>&lt;tr&gt;</dt>
+<dd>&lt;td&gt;$location.path&lt;br /&gt;$location.search&lt;/td&gt;
+&lt;td&gt;$window.location.path&lt;br /&gt;$window.location.search&lt;/td&gt;</dd>
+</dl>
+<p>&lt;/tr&gt;</p>
+</div></blockquote>
+<p class="last">&lt;/tbody&gt;</p>
+</dd>
+</dl>
+<p>&lt;/table&gt;</p>
+<p>## Two-way binding to $location</p>
+<p>The Angular&#8217;s compiler currently does not support two-way binding for methods (see <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+<a class="reference external" href="https://github.com/angular/angular.js/issues/404">https://github.com/angular/angular.js/issues/404</a> issue}).  If you should require two-way binding
+to the $location object (using <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:input.text
+ngModel} directive on an input field), you will need to specify an extra model property
+(e.g. <cite>locationPath</cite>) with two watchers which push $location updates in both directions. For
+example:
+&lt;pre&gt;
+&lt;!&#8211; html &#8211;&gt;
+&lt;input type=&#8221;text&#8221; ng-model=&#8221;locationPath&#8221; /&gt;
+&lt;/pre&gt;
+&lt;pre&gt;
+// js - controller
+$scope.$watch(&#8216;locationPath&#8217;, function(path) {</p>
+<blockquote>
+<div>$location.path(path);</div></blockquote>
+<p>});</p>
+<dl class="docutils">
+<dt>$scope.$watch(&#8216;$location.path()&#8217;, function(path) {</dt>
+<dd>scope.locationPath = path;</dd>
+</dl>
+<p>});
+&lt;/pre&gt;</p>
+<p># Related API</p>
+<ul class="simple">
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$location $location API}</li>
+</ul>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/dev_guide.services.$location.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

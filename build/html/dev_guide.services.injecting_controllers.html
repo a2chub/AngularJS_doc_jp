@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Developer Guide: Angular Services: Injecting Services Into Controllers
+&#64;description</p>
+<p>Using services as dependencies for controllers is very similar to using services as dependencies
+for another service.</p>
+<p>Since JavaScript is a dynamic language, DI can&#8217;t figure out which services to inject by static
+types (like in static typed languages). Therefore, you can specify the service name by using the
+<cite>$inject</cite> property, which is an array containing strings with names of services to be injected.
+The name must match the corresponding service ID registered with angular. The order of the service
+IDs matters: the order of the services in the array will be used when calling the factory function
+with injected parameters. The names of parameters in factory function don&#8217;t matter, but by
+convention they match the service IDs, which has added benefits discussed below.</p>
+<p>&lt;pre&gt;
+function myController($loc, $log) {
+this.firstMethod = function() {</p>
+<blockquote>
+<div>// use $location service
+$loc.setHash();</div></blockquote>
+<p>};
+this.secondMethod = function() {</p>
+<blockquote>
+<div>// use $log service
+$log.info(&#8216;...&#8217;);</div></blockquote>
+<p>};
+}
+// which services to inject ?
+myController.$inject = [&#8216;$location&#8217;, &#8216;$log&#8217;];
+&lt;/pre&gt;</p>
+<p>&lt;doc:example module=&#8221;MyServiceModule&#8221;&gt;
+&lt;doc:source&gt;
+&lt;script&gt;
+angular.</p>
+<blockquote>
+<div><p>module(&#8216;MyServiceModule&#8217;, []).
+factory(&#8216;notify&#8217;, [&#8216;$window&#8217;, function(win) {</p>
+<blockquote>
+<div><blockquote>
+<div><p>var msgs = [];
+return function(msg) {</p>
+<blockquote>
+<div><p>msgs.push(msg);
+if (msgs.length == 3) {</p>
+<blockquote>
+<div>win.alert(msgs.join(&#8220;n&#8221;));
+msgs = [];</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>};</p>
+</div></blockquote>
+<p>}]);</p>
+</div></blockquote>
+</div></blockquote>
+<dl class="docutils">
+<dt>function myController(scope, notifyService) {</dt>
+<dd><dl class="first docutils">
+<dt>scope.callNotify = function(msg) {</dt>
+<dd>notifyService(msg);</dd>
+</dl>
+<p class="last">};</p>
+</dd>
+</dl>
+<p>}</p>
+<p>myController.$inject = [&#8216;$scope&#8217;,&#8217;notify&#8217;];
+&lt;/script&gt;</p>
+<dl class="docutils">
+<dt>&lt;div ng-controller=&#8221;myController&#8221;&gt;</dt>
+<dd>&lt;p&gt;Let&#8217;s try this simple notify service, injected into the controller...&lt;/p&gt;
+&lt;input ng-init=&#8221;message=&#8217;test&#8217;&#8221; ng-model=&#8221;message&#8221; &gt;
+&lt;button ng-click=&#8221;callNotify(message);&#8221;&gt;NOTIFY&lt;/button&gt;</dd>
+</dl>
+<p>&lt;/div&gt;
+&lt;/doc:source&gt;
+&lt;doc:scenario&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>it(&#8216;should test service&#8217;, function() {</dt>
+<dd>expect(element(&#8216;:input[ng\:model=&#8221;message&#8221;]&#8217;).val()).toEqual(&#8216;test&#8217;);</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p>&lt;/doc:scenario&gt;
+&lt;/doc:example&gt;</p>
+<p>## Implicit Dependency Injection</p>
+<p>A new feature of Angular DI allows it to determine the dependency from the name of the parameter.
+Let&#8217;s rewrite the above example to show the use of this implicit dependency injection of
+<cite>$window</cite>, <cite>$scope</cite>, and our <cite>notify</cite> service:</p>
+<p>&lt;doc:example module=&#8221;MyServiceModuleDI&#8221;&gt;
+&lt;doc:source&gt;
+&lt;script&gt;
+angular.</p>
+<blockquote>
+<div><p>module(&#8216;MyServiceModuleDI&#8217;, []).
+factory(&#8216;notify&#8217;, function($window) {</p>
+<blockquote>
+<div><blockquote>
+<div><p>var msgs = [];
+return function(msg) {</p>
+<blockquote>
+<div><p>msgs.push(msg);
+if (msgs.length == 3) {</p>
+<blockquote>
+<div>$window.alert(msgs.join(&#8220;n&#8221;));
+msgs = [];</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>};</p>
+</div></blockquote>
+<p>});</p>
+</div></blockquote>
+</div></blockquote>
+<dl class="docutils">
+<dt>function myController($scope, notify) {</dt>
+<dd><dl class="first docutils">
+<dt>$scope.callNotify = function(msg) {</dt>
+<dd>notify(msg);</dd>
+</dl>
+<p class="last">};</p>
+</dd>
+</dl>
+<p>}
+&lt;/script&gt;
+&lt;div ng-controller=&#8221;myController&#8221;&gt;</p>
+<blockquote>
+<div>&lt;p&gt;Let&#8217;s try the notify service, that is implicitly injected into the controller...&lt;/p&gt;
+&lt;input ng-init=&#8221;message=&#8217;test&#8217;&#8221; ng-model=&#8221;message&#8221;&gt;
+&lt;button ng-click=&#8221;callNotify(message);&#8221;&gt;NOTIFY&lt;/button&gt;</div></blockquote>
+<p>&lt;/div&gt;
+&lt;/doc:source&gt;
+&lt;/doc:example&gt;</p>
+<p>However, if you plan to <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> <a class="reference external" href="http://en.wikipedia.org/wiki/Minification_(programming">http://en.wikipedia.org/wiki/Minification_(programming</a>) minify} your
+code, your variable names will get renamed in which case you will still need to explicitly specify
+dependencies with the <cite>$inject</cite> property.</p>
+<p>## Related Topics</p>
+<p><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services.understanding_services Understanding Angular Services}
+<a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services.creating_services Creating Angular Services}
+<a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services.managing_dependencies Managing Service Dependencies}
+<a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services.testing_services Testing Angular Services}</p>
+<p>## Related API</p>
+<p><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng Angular Service API}</p>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/dev_guide.services.injecting_controllers.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

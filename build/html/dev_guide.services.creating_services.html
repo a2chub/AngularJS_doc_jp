@@ -1,0 +1,185 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Developer Guide: Angular Services: Creating Services
+&#64;description</p>
+<p>While Angular offers several useful services, for any nontrivial application you&#8217;ll find it useful
+to write your own custom services. To do this you begin by registering a service factory function
+with a module either via the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/angular.module Module#factory api} or directly
+via the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/AUTO.$provide $provide} api inside of module config function.</p>
+<p>All Angular services participate in <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> di dependency injection (DI)} by registering
+themselves with Angular&#8217;s DI system (injector) under a <cite>name</cite> (id) as well as by declaring
+dependencies which need to be provided for the factory function of the registered service. The
+ability to swap dependencies for mocks/stubs/dummies in tests allows for services to be highly
+testable.</p>
+<p># Registering Services</p>
+<p>To register a service, you must have a module that this service will be part of. Afterwards, you
+can register the service with the module either via the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/angular.Module Module api} or
+by using the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/AUTO.$provide $provide} service in the module configuration
+function.The following pseudo-code shows both approaches:</p>
+<p>Using the angular.Module api:
+&lt;pre&gt;
+var myModule = angular.module(&#8216;myModule&#8217;, []);
+myModule.factory(&#8216;serviceId&#8217;, function() {</p>
+<blockquote>
+<div>var shinyNewServiceInstance;
+//factory function body that constructs shinyNewServiceInstance
+return shinyNewServiceInstance;</div></blockquote>
+<p>});
+&lt;/pre&gt;</p>
+<p>Using the $provide service:
+&lt;pre&gt;
+angular.module(&#8216;myModule&#8217;, [], function($provide) {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>$provide.factory(&#8216;serviceId&#8217;, function() {</dt>
+<dd>var shinyNewServiceInstance;
+//factory function body that constructs shinyNewServiceInstance
+return shinyNewServiceInstance;</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p>});
+&lt;/pre&gt;</p>
+<p>Note that you are not registering a service instance, but rather a factory function that will
+create this instance when called.</p>
+<p># Dependencies</p>
+<p>Services can not only be depended upon, but can also have their own dependencies. These can be specified
+as arguments of the factory function. <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> di Read more} about dependency injection (DI)
+in Angular and the use of array notation and the $inject property to make DI annotation
+minification-proof.</p>
+<p>Following is an example of a very simple service. This service depends on the <cite>$window</cite> service
+(which is passed as a parameter to the factory function) and is just a function. The service simply
+stores all notifications; after the third one, the service displays all of the notifications by
+window alert.</p>
+<p>&lt;pre&gt;
+angular.module(&#8216;myModule&#8217;, [], function($provide) {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>$provide.factory(&#8216;notify&#8217;, [&#8216;$window&#8217;, function(win) {</dt>
+<dd><p class="first">var msgs = [];
+return function(msg) {</p>
+<blockquote>
+<div><p>msgs.push(msg);
+if (msgs.length == 3) {</p>
+<blockquote>
+<div>win.alert(msgs.join(&#8220;n&#8221;));
+msgs = [];</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p class="last">};</p>
+</dd>
+</dl>
+<p>}]);</p>
+</div></blockquote>
+<p>});
+&lt;/pre&gt;</p>
+<p># Instantiating Angular Services</p>
+<p>All services in Angular are instantiated lazily. This means that a service will be created
+only when it is needed for instantiation of a service or an application component that depends on it.
+In other words, Angular won&#8217;t instantiate services unless they are requested directly or
+indirectly by the application.</p>
+<p># Services as singletons</p>
+<p>Lastly, it is important to realize that all Angular services are application singletons. This means
+that there is only one instance of a given service per injector. Since Angular is lethally allergic
+to global state, it is possible to create multiple injectors, each with its own instance of a
+given service, but that is rarely needed, except in tests where this property is crucially
+important.</p>
+<p>## Related Topics</p>
+<ul class="simple">
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services.understanding_services Understanding Angular Services}</li>
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services.managing_dependencies Managing Service Dependencies}</li>
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services.injecting_controllers Injecting Services Into Controllers }</li>
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services.testing_services Testing Angular Services}</li>
+</ul>
+<p>## Related API</p>
+<ul class="simple">
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng Angular Service API}</li>
+</ul>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/dev_guide.services.creating_services.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,217 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Developer Guide: Angular Services: Managing Service Dependencies
+&#64;description</p>
+<p>Angular allows services to declare other services as dependencies needed for construction of their
+instances.</p>
+<p>To declare dependencies, you specify them in the factory function signature and annotate the
+function with the inject annotations either using by setting the <cite>$inject</cite> property, as an array of
+string identifiers or using the array notation. Optionally the <cite>$inject</cite> property declaration can be
+dropped (see &#8220;Inferring <cite>$inject</cite>&#8221; but note that that is currently an experimental feature).</p>
+<p>Using the array notation:</p>
+<p>&lt;pre&gt;
+function myModuleCfgFn($provide) {</p>
+<blockquote>
+<div>$provide.factory(&#8216;myService&#8217;, [&#8216;dep1&#8217;, &#8216;dep2&#8217;, function(dep1, dep2) {}]);</div></blockquote>
+<p>}
+&lt;/pre&gt;</p>
+<p>Using the $inject property:</p>
+<p>&lt;pre&gt;
+function myModuleCfgFn($provide) {</p>
+<blockquote>
+<div>var myServiceFactory = function(dep1, dep2) {};
+myServiceFactory.$inject = [&#8216;dep1&#8217;, &#8216;dep2&#8217;];
+$provide.factory(&#8216;myService&#8217;, myServiceFactory);</div></blockquote>
+<p>}
+&lt;/pre&gt;</p>
+<p>Using DI inference (incompatible with minifiers):</p>
+<p>&lt;pre&gt;
+function myModuleCfgFn($provide) {</p>
+<blockquote>
+<div>$provide.factory(&#8216;myService&#8217;, function(dep1, dep2) {});</div></blockquote>
+<p>}
+&lt;/pre&gt;</p>
+<p>Here is an example of two services, one of which depends on the other and both
+of which depend on other services that are provided by the Angular framework:</p>
+<p>&lt;pre&gt;
+/**</p>
+<blockquote>
+<div><ul class="simple">
+<li>batchLog service allows for messages to be queued in memory and flushed</li>
+<li>to the console.log every 50 seconds.</li>
+<li></li>
+<li>&#64;param {*} message Message to be logged.</li>
+</ul>
+<dl class="docutils">
+<dt><a href="#id1"><span class="problematic" id="id2">*</span></a>/</dt>
+<dd><dl class="first docutils">
+<dt>function batchLogModule($provide){</dt>
+<dd><dl class="first docutils">
+<dt>$provide.factory(&#8216;batchLog&#8217;, [&#8216;$timeout&#8217;, &#8216;$log&#8217;, function($timeout, $log) {</dt>
+<dd><p class="first">var messageQueue = [];</p>
+<dl class="docutils">
+<dt>function log() {</dt>
+<dd><dl class="first docutils">
+<dt>if (messageQueue.length) {</dt>
+<dd>$log(&#8216;batchLog messages: &#8216;, messageQueue);
+messageQueue = [];</dd>
+</dl>
+<p class="last">}
+$timeout(log, 50000);</p>
+</dd>
+</dl>
+<p>}</p>
+<p>// start periodic checking
+log();</p>
+<dl class="docutils">
+<dt>return function(message) {</dt>
+<dd>messageQueue.push(message);</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>}]);</p>
+<dl class="docutils">
+<dt>/**</dt>
+<dd><ul class="first simple">
+<li>routeTemplateMonitor monitors each $route change and logs the current</li>
+<li>template via the batchLog service.</li>
+</ul>
+<p class="last"><a href="#id3"><span class="problematic" id="id4">*</span></a>/</p>
+</dd>
+<dt>$provide.factory(&#8216;routeTemplateMonitor&#8217;,</dt>
+<dd><blockquote class="first">
+<div><blockquote>
+<div>[&#8216;$route&#8217;, &#8216;batchLog&#8217;, &#8216;$rootScope&#8217;,</div></blockquote>
+<p>function($route,   batchLog,   $rootScope) {</p>
+</div></blockquote>
+<dl class="docutils">
+<dt>$rootScope.$on(&#8216;$routeChangeSuccess&#8217;, function() {</dt>
+<dd>batchLog($route.current ? $route.current.template : null);</dd>
+</dl>
+<p class="last">});</p>
+</dd>
+</dl>
+<p class="last">}]);</p>
+</dd>
+</dl>
+<p>}</p>
+<p class="last">// get the main service to kick of the application
+angular.injector([batchLogModule]).get(&#8216;routeTemplateMonitor&#8217;);</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>&lt;/pre&gt;</p>
+<p>Things to notice in this example:</p>
+<ul class="simple">
+<li>The <cite>batchLog</cite> service depends on the built-in <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$timeout $timeout} and</li>
+</ul>
+<p><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$log $log} services, and allows messages to be logged into the
+<cite>console.log</cite> in batches.
+* The <cite>routeTemplateMonitor</cite> service depends on the built-in <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$route
+$route} service as well as our custom <cite>batchLog</cite> service.
+* Both of our services use the factory function signature and array notation for inject annotations
+to declare their dependencies. It is important that the order of the string identifiers in the array
+is the same as the order of argument names in the signature of the factory function. Unless the
+dependencies are inferred from the function signature, it is this array with IDs and their order
+that the injector uses to determine which services and in which order to inject.</p>
+<p>## Related Topics</p>
+<ul class="simple">
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services.understanding_services Understanding Angular Services}</li>
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services.creating_services Creating Angular Services}</li>
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services.injecting_controllers Injecting Services Into Controllers }</li>
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.services.testing_services Testing Angular Services}</li>
+</ul>
+<p>## Related API</p>
+<ul class="simple">
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng Angular Service API}</li>
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/angular.injector Angular Injector API}</li>
+</ul>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/dev_guide.services.managing_dependencies.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

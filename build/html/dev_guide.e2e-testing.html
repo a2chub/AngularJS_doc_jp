@@ -1,0 +1,226 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;workInProgress
+&#64;ngdoc overview
+&#64;name Developer Guide: E2E Testing
+&#64;description</p>
+<p>As applications grow in size and complexity, it becomes unrealistic to rely on manual testing to
+verify the correctness of new features, catch bugs and notice regressions.</p>
+<p>To solve this problem, we have built an Angular Scenario Runner which simulates user interactions
+that will help you verify the health of your Angular application.</p>
+<p># Overview
+You will write scenario tests in JavaScript, which describe how your application should behave,
+given a certain interaction in a specific state. A scenario is comprised of one or more <cite>it</cite> blocks
+(you can think of these as the requirements of your application), which in turn are made of
+<strong>commands</strong> and <strong>expectations</strong>. Commands tell the Runner to do something with the application
+(such as navigate to a page or click on a button), and expectations tell the Runner to assert
+something about the state (such as the value of a field or the current URL). If any expectation
+fails, the runner marks the <cite>it</cite>  as &#8220;failed&#8221; and continues on to the next one. Scenarios may also
+have <strong>beforeEach</strong> and <strong>afterEach</strong> blocks, which will be run before (or after) each <cite>it</cite>  block,
+regardless of whether they pass or fail.</p>
+<p>&lt;img src=&#8221;img/guide/scenario_runner.png&#8221;&gt;</p>
+<p>In addition to the above elements, scenarios may also contain helper functions to avoid duplicating
+code in the <cite>it</cite> blocks.</p>
+<p>Here is an example of a simple scenario:
+&lt;pre&gt;
+describe(&#8216;Buzz Client&#8217;, function() {
+it(&#8216;should filter results&#8217;, function() {</p>
+<blockquote>
+<div>input(&#8216;user&#8217;).enter(&#8216;jacksparrow&#8217;);
+element(&#8216;:button&#8217;).click();
+expect(repeater(&#8216;ul li&#8217;).count()).toEqual(10);
+input(&#8216;filterText&#8217;).enter(&#8216;Bees&#8217;);
+expect(repeater(&#8216;ul li&#8217;).count()).toEqual(1);</div></blockquote>
+<p>});
+});
+&lt;/pre&gt;
+This scenario describes the requirements of a Buzz Client, specifically, that it should be able to
+filter the stream of the user. It starts by entering a value in the &#8216;user&#8217; input field, clicking
+the only button on the page, and then it verifies that there are 10 items listed. It then enters
+&#8216;Bees&#8217; in the &#8216;filterText&#8217; input field and verifies that the list is reduced to a single item.</p>
+<p>The API section below lists the available commands and expectations for the Runner.</p>
+<p># API
+Source: <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> <a class="reference external" href="https://github.com/angular/angular.js/blob/master/src/ngScenario/dsl.js">https://github.com/angular/angular.js/blob/master/src/ngScenario/dsl.js</a>}</p>
+<p>## pause()
+Pauses the execution of the tests until you call <cite>resume()</cite> in the console (or click the resume
+link in the Runner UI).</p>
+<p>## sleep(seconds)
+Pauses the execution of the tests for the specified number of <cite>seconds</cite>.</p>
+<p>## browser().navigateTo(url)
+Loads the <cite>url</cite> into the test frame.</p>
+<p>## browser().navigateTo(url, fn)
+Loads the URL returned by <cite>fn</cite> into the testing frame. The given <cite>url</cite> is only used for the test
+output. Use this when the destination URL is dynamic (that is, the destination is unknown when you
+write the test).</p>
+<p>## browser().reload()
+Refreshes the currently loaded page in the test frame.</p>
+<p>## browser().window().href()
+Returns the window.location.href of the currently loaded page in the test frame.</p>
+<p>## browser().window().path()
+Returns the window.location.pathname of the currently loaded page in the test frame.</p>
+<p>## browser().window().search()
+Returns the window.location.search of the currently loaded page in the test frame.</p>
+<p>## browser().window().hash()
+Returns the window.location.hash (without <cite>#</cite>) of the currently loaded page in the test frame.</p>
+<p>## browser().location().url()
+Returns the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$location $location.url()} of the currently loaded page in
+the test frame.</p>
+<p>## browser().location().path()
+Returns the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$location $location.path()} of the currently loaded page in
+the test frame.</p>
+<p>## browser().location().search()
+Returns the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$location $location.search()} of the currently loaded page
+in the test frame.</p>
+<p>## browser().location().hash()
+Returns the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$location $location.hash()} of the currently loaded page in
+the test frame.</p>
+<p>## expect(future).{matcher}
+Asserts the value of the given <cite>future</cite> satisfies the <cite>matcher</cite>. All API statements return a
+<cite>future</cite> object, which get a <cite>value</cite> assigned after they are executed. Matchers are defined using
+<cite>angular.scenario.matcher</cite>, and they use the value of futures to run the expectation. For example:
+<cite>expect(browser().location().href()).toEqual(&#8216;http://www.google.com&#8217;)</cite></p>
+<p>## expect(future).not().{matcher}
+Asserts the value of the given <cite>future</cite> satisfies the negation of the <cite>matcher</cite>.</p>
+<p>## using(selector, label)
+Scopes the next DSL element selection.</p>
+<p>## binding(name)
+Returns the value of the first binding matching the given <cite>name</cite>.</p>
+<p>## input(name).enter(value)
+Enters the given <cite>value</cite> in the text field with the given <cite>name</cite>.</p>
+<p>## input(name).check()
+Checks/unchecks the checkbox with the given <cite>name</cite>.</p>
+<p>## input(name).select(value)
+Selects the given <cite>value</cite> in the radio button with the given <cite>name</cite>.</p>
+<p>## input(name).val()
+Returns the current value of an input field with the given <cite>name</cite>.</p>
+<p>## repeater(selector, label).count()
+Returns the number of rows in the repeater matching the given jQuery <cite>selector</cite>. The <cite>label</cite> is
+used for test output.</p>
+<p>## repeater(selector, label).row(index)
+Returns an array with the bindings in the row at the given <cite>index</cite> in the repeater matching the
+given jQuery <cite>selector</cite>. The <cite>label</cite> is used for test output.</p>
+<p>## repeater(selector, label).column(binding)
+Returns an array with the values in the column with the given <cite>binding</cite> in the repeater matching
+the given jQuery <cite>selector</cite>. The <cite>label</cite> is used for test output.</p>
+<p>## select(name).option(value)
+Picks the option with the given <cite>value</cite> on the select with the given <cite>name</cite>.</p>
+<p>## select(name).option(value1, value2...)
+Picks the options with the given <cite>values</cite> on the multi select with the given <cite>name</cite>.</p>
+<p>## element(selector, label).count()
+Returns the number of elements that match the given jQuery <cite>selector</cite>. The <cite>label</cite> is used for test
+output.</p>
+<p>## element(selector, label).click()
+Clicks on the element matching the given jQuery <cite>selector</cite>. The <cite>label</cite> is used for test output.</p>
+<p>## element(selector, label).query(fn)
+Executes the function <cite>fn(selectedElements, done)</cite>, where selectedElements are the elements that
+match the given jQuery <cite>selector</cite> and <cite>done</cite> is a function that is called at the end of the <cite>fn</cite>
+function.  The <cite>label</cite> is used for test output.</p>
+<p>## element(selector, label).{method}()
+Returns the result of calling <cite>method</cite> on the element matching the given jQuery <cite>selector</cite>, where
+<cite>method</cite> can be any of the following jQuery methods: <cite>val</cite>, <cite>text</cite>, <cite>html</cite>, <cite>height</cite>,
+<cite>innerHeight</cite>, <cite>outerHeight</cite>, <cite>width</cite>, <cite>innerWidth</cite>, <cite>outerWidth</cite>, <cite>position</cite>, <cite>scrollLeft</cite>,
+<cite>scrollTop</cite>, <cite>offset</cite>. The <cite>label</cite> is used for test output.</p>
+<p>## element(selector, label).{method}(value)
+Executes the <cite>method</cite> passing in <cite>value</cite> on the element matching the given jQuery <cite>selector</cite>, where
+<cite>method</cite> can be any of the following jQuery methods: <cite>val</cite>, <cite>text</cite>, <cite>html</cite>, <cite>height</cite>,
+<cite>innerHeight</cite>, <cite>outerHeight</cite>, <cite>width</cite>, <cite>innerWidth</cite>, <cite>outerWidth</cite>, <cite>position</cite>, <cite>scrollLeft</cite>,
+<cite>scrollTop</cite>, <cite>offset</cite>.  The <cite>label</cite> is used for test output.</p>
+<p>## element(selector, label).{method}(key)
+Returns the result of calling <cite>method</cite> passing in <cite>key</cite> on the element matching the given jQuery
+<cite>selector</cite>, where <cite>method</cite> can be any of the following jQuery methods: <cite>attr</cite>, <cite>prop</cite>, <cite>css</cite>. The
+<cite>label</cite> is used for test output.</p>
+<p>## element(selector, label).{method}(key, value)
+Executes the <cite>method</cite> passing in <cite>key</cite> and <cite>value</cite> on the element matching the given jQuery
+<cite>selector</cite>, where <cite>method</cite> can be any of the following jQuery methods: <cite>attr</cite>,  <cite>prop</cite>, <cite>css</cite>.  The
+<cite>label</cite> is used for test output.</p>
+<p>JavaScript is a dynamically typed language which comes with great power of expression, but it also
+come with almost no-help from the compiler. For this reason we feel very strongly that any code
+written in JavaScript needs to come with a strong set of tests. We have built many features into
+angular which makes testing your angular applications easy. So there is no excuse for not testing.</p>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/dev_guide.e2e-testing.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

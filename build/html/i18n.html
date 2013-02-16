@@ -1,0 +1,183 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Developer Guide: i18n and l10n
+&#64;description</p>
+<p># I18n and L10n in AngularJS</p>
+<p><strong>What is i18n and l10n?</strong></p>
+<p>Internationalization, abbreviated i18n, is the process of developing products in such a way that
+they can be localized for languages and cultures easily. Localization, abbreviated l10n, is the
+process of adapting applications and text to enable their usability in a particular cultural or
+linguistic market. For application developers, internationalizing an application means abstracting
+all of the strings and other locale-specific bits (such as date or currency formats) out of the
+application. Localizing an application means providing translations and localized formats for the
+abstracted bits.</p>
+<p><strong>What level of support for i18n/l10n is currently in Angular?</strong></p>
+<p>Currently, Angular supports i18n/l10n for <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+<a class="reference external" href="http://docs.angularjs.org/#!/api/ng.filter:date">http://docs.angularjs.org/#!/api/ng.filter:date</a> datetime}, <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+<a class="reference external" href="http://docs.angularjs.org/#!/api/ng.filter:number">http://docs.angularjs.org/#!/api/ng.filter:number</a> number} and <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+<a class="reference external" href="http://docs.angularjs.org/#!/api/ng.filter:currency">http://docs.angularjs.org/#!/api/ng.filter:currency</a> currency} filters.</p>
+<p>Additionally, Angular supports localizable pluralization support provided by the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.directive:ngPluralize ngPluralize directive}.</p>
+<p>All localizable Angular components depend on locale-specific rule sets managed by the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.$locale $locale service}.</p>
+<p>For readers who want to jump straight into examples, we have a few web pages that showcase how to
+use Angular filters with various locale rule sets. You can find these examples either on <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+<a class="reference external" href="https://github.com/angular/angular.js/tree/master/i18n/e2e">https://github.com/angular/angular.js/tree/master/i18n/e2e</a> Github} or in the i18n/e2e folder of
+Angular development package.</p>
+<p><strong>What is a locale id?</strong></p>
+<p>A locale is a specific geographical, political, or cultural region. The most commonly used locale
+ID consists of two parts: language code and country code. For example, en-US, en-AU, zh-CN are all
+valid locale IDs that have both language codes and country codes. Because specifying a country code
+in locale ID is optional,  locale IDs such as en, zh,  and sk are also valid. See the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+<a class="reference external" href="http://userguide.icu-project.org/locale">http://userguide.icu-project.org/locale</a> ICU } website for more information about using locale IDs.</p>
+<p><strong>Supported locales in Angular</strong>
+Angular separates number and datetime format rule sets into different files, each file for a
+particular locale. You can find a list of currently supported locales <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+<a class="reference external" href="https://github.com/angular/angular.js/tree/master/i18n/locale">https://github.com/angular/angular.js/tree/master/i18n/locale</a> here}
+# Providing locale rules to Angular</p>
+<p>There are two approaches to providing locale rules to Angular:</p>
+<p><strong>1. Pre-bundled rule sets</strong></p>
+<p>You can pre-bundle the desired locale file with Angular by concatenating the content of the
+locale-specific file to the end of <cite>angular.js</cite> or <cite>angular.min.js</cite> file.</p>
+<p>For example on <a href="#id1"><span class="problematic" id="id2">*</span></a>nix, to create a an angular.js file that contains localization rules for german
+locale, you can do the following:</p>
+<p><cite>cat angular.js i18n/angular-locale_de-ge.js &gt; angular_de-ge.js</cite></p>
+<p>When the application containing <cite>angular_de-ge.js</cite> script instead of the generic angular.js script
+starts, Angular is automatically pre-configured with localization rules for the german locale.</p>
+<p><strong>2. Including locale js script in index.html page</strong></p>
+<p>You can also include the locale specific js file in the index.html page. For example, if one client
+requires German locale, you would serve index_de-ge.html which will look something like this:</p>
+<p>&lt;pre&gt;
+&lt;html ng-app&gt;</p>
+<blockquote>
+<div>&lt;head&gt;</div></blockquote>
+<dl class="docutils">
+<dt>….</dt>
+<dd>&lt;script src=&#8221;angular.js&#8221;&gt;&lt;/script&gt;
+&lt;script src=&#8221;i18n/angular-locale_de-ge.js&#8221;&gt;&lt;/script&gt;</dd>
+<dt>….</dt>
+<dd>&lt;/head&gt;</dd>
+</dl>
+<p>&lt;/html&gt;
+&lt;/pre&gt;</p>
+<p><strong>Comparison of the two approaches</strong>
+Both approaches described above requires you to prepare different index.html pages or js files for
+each locale that your app may be localized into. You also need to configure your server to serve
+the correct file that correspond to the desired locale.</p>
+<p>However, the second approach (Including locale js script in index.html page) is likely to be slower
+because an extra script needs to be loaded.</p>
+<p># &#8220;Gotchas&#8221;</p>
+<p><strong>Currency symbol &#8220;gotcha&#8221;</strong></p>
+<p>Angular&#8217;s <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> <a class="reference external" href="http://docs.angularjs.org/#!/api/ng.filter:currency">http://docs.angularjs.org/#!/api/ng.filter:currency</a> currency filter} allows
+you to use the default currency symbol from the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$locale locale service},
+or you can provide the filter with a custom currency symbol. If your app will be used only in one
+locale, it is fine to rely on the default currency symbol. However, if you anticipate that viewers
+in other locales might use your app, you should provide your own currency symbol to make sure the
+actual value is understood.</p>
+<p>For example, if you want to display account balance of 1000 dollars with the following binding
+containing currency filter: <cite>{{ 1000 | currency }}</cite>, and your app is currently in en-US locale.
+&#8216;$1000.00&#8217; will be shown. However, if someone in a different local (say, Japan) views your app, her
+browser will specify the locale as ja, and the balance of &#8216;¥1000.00&#8217; will be shown instead. This
+will really upset your client.</p>
+<p>In this case, you need to override the default currency symbol by providing the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+<a class="reference external" href="http://docs.angularjs.org/#!/api/ng.filter:currency">http://docs.angularjs.org/#!/api/ng.filter:currency</a> currency filter} with a currency symbol as
+a parameter when you configure the filter, for example, {{ 1000 | currency:&#8221;USD$&#8221;}}. This way,
+Angular will always show a balance of &#8216;USD$1000&#8217; and disregard any locale changes.</p>
+<p><strong>Translation length &#8220;gotcha&#8221;</strong></p>
+<p>Keep in mind that translated strings/datetime formats can vary greatly in length. For example,
+<cite>June 3, 1977</cite> will be translated to Spanish as <cite>3 de junio de 1977</cite>. There are bound to be other
+more extreme cases. Hence, when internationalizing your apps, you need to apply CSS rules
+accordingly and do thorough testing to make sure UI components do not overlap.</p>
+<p><strong>Timezones</strong></p>
+<p>Keep in mind that Angular datetime filter uses the time zone settings of the browser. So the same
+application will show different time information depending on the time zone settings of the
+computer that the application is running on. Neither Javascript nor Angular currently supports
+displaying the date with a timezone specified by the developer.</p>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/i18n.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

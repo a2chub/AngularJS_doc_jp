@@ -1,0 +1,483 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Forms
+&#64;description</p>
+<p>Controls (<cite>input</cite>, <cite>select</cite>, <cite>textarea</cite>) are a way for user to enter data.
+Form is a collection of controls for the purpose of grouping related controls together.</p>
+<p>Form and controls provide validation services, so that the user can be notified of invalid input.
+This provides a better user experience, because the user gets instant feedback on how to correct the error.
+Keep in mind that while client-side validation plays an important role in providing good user experience, it can easily be circumvented and thus can not be trusted.
+Server-side validation is still necessary for a secure application.</p>
+<p># Simple form
+The key directive in understanding two-way data-binding is <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:ngModel ngModel}.
+The <cite>ngModel</cite> directive provides the two-way data-binding by synchronizing the model to the view, as well as view to the model.
+In addition it provides an <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:ngModel.NgModelController API} for other directives to augment its behavior.</p>
+<p>&lt;doc:example&gt;
+&lt;doc:source&gt;
+&lt;div ng-controller=&#8221;Controller&#8221;&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;form novalidate class=&#8221;simple-form&#8221;&gt;</dt>
+<dd>Name: &lt;input type=&#8221;text&#8221; ng-model=&#8221;user.name&#8221; /&gt;&lt;br /&gt;
+E-mail: &lt;input type=&#8221;email&#8221; ng-model=&#8221;user.email&#8221; /&gt;&lt;br /&gt;
+Gender: &lt;input type=&#8221;radio&#8221; ng-model=&#8221;user.gender&#8221; value=&#8221;male&#8221; /&gt;male
+&lt;input type=&#8221;radio&#8221; ng-model=&#8221;user.gender&#8221; value=&#8221;female&#8221; /&gt;female&lt;br /&gt;
+&lt;button ng-click=&#8221;reset()&#8221;&gt;RESET&lt;/button&gt;
+&lt;button ng-click=&#8221;update(user)&#8221;&gt;SAVE&lt;/button&gt;</dd>
+</dl>
+<p>&lt;/form&gt;
+&lt;pre&gt;form = {{user | json}}&lt;/pre&gt;
+&lt;pre&gt;master = {{master | json}}&lt;/pre&gt;</p>
+</div></blockquote>
+<p>&lt;/div&gt;</p>
+<dl class="docutils">
+<dt>&lt;script&gt;</dt>
+<dd><dl class="first docutils">
+<dt>function Controller($scope) {</dt>
+<dd><p class="first">$scope.master= {};</p>
+<dl class="docutils">
+<dt>$scope.update = function(user) {</dt>
+<dd>$scope.master= angular.copy(user);</dd>
+</dl>
+<p>};</p>
+<dl class="docutils">
+<dt>$scope.reset = function() {</dt>
+<dd>$scope.user = angular.copy($scope.master);</dd>
+</dl>
+<p>};</p>
+<p class="last">$scope.reset();</p>
+</dd>
+</dl>
+<p class="last">}
+&lt;/script&gt;</p>
+</dd>
+</dl>
+<p>&lt;/doc:source&gt;
+&lt;/doc:example&gt;</p>
+<p>Note that <cite>novalidate</cite> is used to disable browser&#8217;s native form validation.</p>
+<p># Using CSS classes</p>
+<p>To allow styling of form as well as controls, <cite>ngModel</cite>  add these CSS classes:</p>
+<ul class="simple">
+<li><cite>ng-valid</cite></li>
+<li><cite>ng-invalid</cite></li>
+<li><cite>ng-pristine</cite></li>
+<li><cite>ng-dirty</cite></li>
+</ul>
+<p>The following example uses the CSS to display validity of each form control.
+In the example both <cite>user.name</cite> and <cite>user.email</cite> are required, but are rendered with red background only when they are dirty.
+This ensures that the user is not distracted with an error until after interacting with the control, and failing to satisfy its validity.</p>
+<p>&lt;doc:example&gt;
+&lt;doc:source&gt;
+&lt;div ng-controller=&#8221;Controller&#8221;&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;form novalidate class=&#8221;css-form&#8221;&gt;</dt>
+<dd><dl class="first docutils">
+<dt>Name:</dt>
+<dd>&lt;input type=&#8221;text&#8221; ng-model=&#8221;user.name&#8221; required /&gt;&lt;br /&gt;</dd>
+</dl>
+<p class="last">E-mail: &lt;input type=&#8221;email&#8221; ng-model=&#8221;user.email&#8221; required /&gt;&lt;br /&gt;
+Gender: &lt;input type=&#8221;radio&#8221; ng-model=&#8221;user.gender&#8221; value=&#8221;male&#8221; /&gt;male
+&lt;input type=&#8221;radio&#8221; ng-model=&#8221;user.gender&#8221; value=&#8221;female&#8221; /&gt;female&lt;br /&gt;
+&lt;button ng-click=&#8221;reset()&#8221;&gt;RESET&lt;/button&gt;
+&lt;button ng-click=&#8221;update(user)&#8221;&gt;SAVE&lt;/button&gt;</p>
+</dd>
+</dl>
+<p>&lt;/form&gt;</p>
+</div></blockquote>
+<p>&lt;/div&gt;</p>
+<dl class="docutils">
+<dt>&lt;style type=&#8221;text/css&#8221;&gt;</dt>
+<dd><dl class="first docutils">
+<dt>.css-form input.ng-invalid.ng-dirty {</dt>
+<dd>background-color: #FA787E;</dd>
+</dl>
+<p>}</p>
+<dl class="docutils">
+<dt>.css-form input.ng-valid.ng-dirty {</dt>
+<dd>background-color: #78FA89;</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>&lt;/style&gt;</p>
+<dl class="docutils">
+<dt>&lt;script&gt;</dt>
+<dd><dl class="first docutils">
+<dt>function Controller($scope) {</dt>
+<dd><p class="first">$scope.master= {};</p>
+<dl class="docutils">
+<dt>$scope.update = function(user) {</dt>
+<dd>$scope.master= angular.copy(user);</dd>
+</dl>
+<p>};</p>
+<dl class="docutils">
+<dt>$scope.reset = function() {</dt>
+<dd>$scope.user = angular.copy($scope.master);</dd>
+</dl>
+<p>};</p>
+<p class="last">$scope.reset();</p>
+</dd>
+</dl>
+<p class="last">}
+&lt;/script&gt;</p>
+</dd>
+</dl>
+<p>&lt;/doc:source&gt;
+&lt;/doc:example&gt;</p>
+<p># Binding to form and control state</p>
+<p>A form is in instance of <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:form.FormController FormController}.
+The form instance can optionally be published into the scope using the <cite>name</cite> attribute.
+Similarly control is an instance of <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:ngModel.NgModelController NgModelController}.
+The control instance can similarly be published into the form instance using the <cite>name</cite> attribute.
+This implies that the internal state of both the form and the control is available for binding in the view using the standard binding primitives.</p>
+<p>This allows us to extend the above example with these features:</p>
+<ul class="simple">
+<li>RESET button is enabled only if form has some changes</li>
+<li>SAVE button is enabled only if form has some changes and is valid</li>
+<li>custom error messages for <cite>user.email</cite> and <cite>user.agree</cite></li>
+</ul>
+<p>&lt;doc:example&gt;
+&lt;doc:source&gt;
+&lt;div ng-controller=&#8221;Controller&#8221;&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;form name=&#8221;form&#8221; class=&#8221;css-form&#8221; novalidate&gt;</dt>
+<dd><dl class="first docutils">
+<dt>Name:</dt>
+<dd>&lt;input type=&#8221;text&#8221; ng-model=&#8221;user.name&#8221; name=&#8221;uName&#8221; required /&gt;&lt;br /&gt;</dd>
+<dt>E-mail:</dt>
+<dd>&lt;input type=&#8221;email&#8221; ng-model=&#8221;user.email&#8221; name=&#8221;uEmail&#8221; required/&gt;&lt;br /&gt;</dd>
+<dt>&lt;div ng-show=&#8221;form.uEmail.$dirty &amp;&amp; form.uEmail.$invalid&#8221;&gt;Invalid:</dt>
+<dd>&lt;span ng-show=&#8221;form.uEmail.$error.required&#8221;&gt;Tell us your email.&lt;/span&gt;
+&lt;span ng-show=&#8221;form.uEmail.$error.email&#8221;&gt;This is not a valid email.&lt;/span&gt;</dd>
+</dl>
+<p>&lt;/div&gt;</p>
+<p>Gender: &lt;input type=&#8221;radio&#8221; ng-model=&#8221;user.gender&#8221; value=&#8221;male&#8221; /&gt;male
+&lt;input type=&#8221;radio&#8221; ng-model=&#8221;user.gender&#8221; value=&#8221;female&#8221; /&gt;female&lt;br /&gt;</p>
+<p>&lt;input type=&#8221;checkbox&#8221; ng-model=&#8221;user.agree&#8221; name=&#8221;userAgree&#8221; required /&gt;
+I agree: &lt;input ng-show=&#8221;user.agree&#8221; type=&#8221;text&#8221; ng-model=&#8221;user.agreeSign&#8221;</p>
+<blockquote>
+<div>required /&gt;&lt;br /&gt;</div></blockquote>
+<p>&lt;div ng-show=&#8221;!user.agree || !user.agreeSign&#8221;&gt;Please agree and sign.&lt;/div&gt;</p>
+<p>&lt;button ng-click=&#8221;reset()&#8221; ng-disabled=&#8221;isUnchanged(user)&#8221;&gt;RESET&lt;/button&gt;
+&lt;button ng-click=&#8221;update(user)&#8221;</p>
+<blockquote class="last">
+<div>ng-disabled=&#8221;form.$invalid || isUnchanged(user)&#8221;&gt;SAVE&lt;/button&gt;</div></blockquote>
+</dd>
+</dl>
+<p>&lt;/form&gt;</p>
+</div></blockquote>
+<p>&lt;/div&gt;</p>
+<dl class="docutils">
+<dt>&lt;script&gt;</dt>
+<dd><dl class="first docutils">
+<dt>function Controller($scope) {</dt>
+<dd><p class="first">$scope.master= {};</p>
+<dl class="docutils">
+<dt>$scope.update = function(user) {</dt>
+<dd>$scope.master= angular.copy(user);</dd>
+</dl>
+<p>};</p>
+<dl class="docutils">
+<dt>$scope.reset = function() {</dt>
+<dd>$scope.user = angular.copy($scope.master);</dd>
+</dl>
+<p>};</p>
+<dl class="docutils">
+<dt>$scope.isUnchanged = function(user) {</dt>
+<dd>return angular.equals(user, $scope.master);</dd>
+</dl>
+<p>};</p>
+<p class="last">$scope.reset();</p>
+</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>&lt;/script&gt;
+&lt;/doc:source&gt;
+&lt;/doc:example&gt;</p>
+<p># Custom Validation</p>
+<p>Angular provides basic implementation for most common html5 <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:input input}
+types: ({&#64;link api/ng.directive:input.text text}, {&#64;link api/ng.directive:input.number number}, {&#64;link api/ng.directive:input.url url}, {&#64;link api/ng.directive:input.email email}, {&#64;link api/ng.directive:input.radio radio}, {&#64;link api/ng.directive:input.checkbox checkbox}), as well as some directives for validation (<cite>required</cite>, <cite>pattern</cite>, <cite>minlength</cite>, <cite>maxlength</cite>, <cite>min</cite>, <cite>max</cite>).</p>
+<p>Defining your own validator can be done by defining your own directive which adds a custom validation function to the <cite>ngModel</cite> <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:ngModel.NgModelController controller}.
+To get a hold of the controller the directive specifies a dependency as shown in the example below.
+The validation can occur in two places:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>Model to View update</strong> -
+Whenever the bound model changes, all functions in <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:ngModel.NgModelController#$formatters NgModelController#$formatters} array are pipe-lined, so that each of these functions has an opportunity to format the value and change validity state of the form control through {&#64;link api/ng.directive:ngModel.NgModelController#$setValidity NgModelController#$setValidity}.</li>
+<li><strong>View to Model update</strong> -
+In a similar way, whenever a user interacts with a control it calls <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:ngModel.NgModelController#$setViewValue NgModelController#$setViewValue}.</li>
+</ul>
+</div></blockquote>
+<p>This in turn pipelines all functions in the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:ngModel.NgModelController#$parsers NgModelController#$parsers} array, so that each of these functions has an opportunity to convert the value and change validity state of the form control through {&#64;link api/ng.directive:ngModel.NgModelController#$setValidity NgModelController#$setValidity}.</p>
+<p>In the following example we create two directives.</p>
+<blockquote>
+<div><ul class="simple">
+<li>The first one is <cite>integer</cite> and it validates whether the input is a valid integer.
+For example <cite>1.23</cite> is an invalid value, since it contains a fraction.
+Note that we unshift the array instead of pushing.
+This is because we want to be first parser and consume the control string value, as we need to execute the validation function before a conversion to number occurs.</li>
+<li>The second directive is a <cite>smart-float</cite>.
+It parses both <cite>1.2</cite> and <cite>1,2</cite> into a valid float number <cite>1.2</cite>.
+Note that we can&#8217;t use input type <cite>number</cite> here as HTML5 browsers would not allow the user to type what it would consider an invalid number such as <cite>1,2</cite>.</li>
+</ul>
+</div></blockquote>
+<p>&lt;doc:example module=&#8221;form-example1&#8221;&gt;
+&lt;doc:source&gt;
+&lt;div ng-controller=&#8221;Controller&#8221;&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;form name=&#8221;form&#8221; class=&#8221;css-form&#8221; novalidate&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;div&gt;</dt>
+<dd><p class="first">Size (integer 0 - 10):
+&lt;input type=&#8221;number&#8221; ng-model=&#8221;size&#8221; name=&#8221;size&#8221;</p>
+<blockquote>
+<div>min=&#8221;0&#8221; max=&#8221;10&#8221; integer /&gt;{{size}}&lt;br /&gt;</div></blockquote>
+<p>&lt;span ng-show=&#8221;form.size.$error.integer&#8221;&gt;This is not valid integer!&lt;/span&gt;
+&lt;span ng-show=&#8221;form.size.$error.min || form.size.$error.max&#8221;&gt;</p>
+<blockquote class="last">
+<div>The value must be in range 0 to 10!&lt;/span&gt;</div></blockquote>
+</dd>
+</dl>
+<p>&lt;/div&gt;</p>
+<dl class="docutils">
+<dt>&lt;div&gt;</dt>
+<dd><p class="first">Length (float):
+&lt;input type=&#8221;text&#8221; ng-model=&#8221;length&#8221; name=&#8221;length&#8221; smart-float /&gt;
+{{length}}&lt;br /&gt;
+&lt;span ng-show=&#8221;form.length.$error.float&#8221;&gt;</p>
+<blockquote class="last">
+<div>This is not a valid float number!&lt;/span&gt;</div></blockquote>
+</dd>
+</dl>
+<p class="last">&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>&lt;/form&gt;</p>
+</div></blockquote>
+<p>&lt;/div&gt;</p>
+<dl class="docutils">
+<dt>&lt;script&gt;</dt>
+<dd><p class="first">var app = angular.module(&#8216;form-example1&#8217;, []);</p>
+<p>var INTEGER_REGEXP = /^-?d*$/;
+app.directive(&#8216;integer&#8217;, function() {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>return {</dt>
+<dd><p class="first">require: &#8216;ngModel&#8217;,
+link: function(scope, elm, attrs, ctrl) {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>ctrl.$parsers.unshift(function(viewValue) {</dt>
+<dd><dl class="first docutils">
+<dt>if (INTEGER_REGEXP.test(viewValue)) {</dt>
+<dd>// it is valid
+ctrl.$setValidity(&#8216;integer&#8217;, true);
+return viewValue;</dd>
+<dt>} else {</dt>
+<dd>// it is invalid, return undefined (no model update)
+ctrl.$setValidity(&#8216;integer&#8217;, false);
+return undefined;</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>};</p>
+</div></blockquote>
+<p>});</p>
+<p>var FLOAT_REGEXP = /^-?d+((.|,)d+)?$/;
+app.directive(&#8216;smartFloat&#8217;, function() {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>return {</dt>
+<dd><p class="first">require: &#8216;ngModel&#8217;,
+link: function(scope, elm, attrs, ctrl) {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>ctrl.$parsers.unshift(function(viewValue) {</dt>
+<dd><dl class="first docutils">
+<dt>if (FLOAT_REGEXP.test(viewValue)) {</dt>
+<dd>ctrl.$setValidity(&#8216;float&#8217;, true);
+return parseFloat(viewValue.replace(&#8216;,&#8217;, &#8216;.&#8217;));</dd>
+<dt>} else {</dt>
+<dd>ctrl.$setValidity(&#8216;float&#8217;, false);
+return undefined;</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>};</p>
+</div></blockquote>
+<p class="last">});</p>
+</dd>
+</dl>
+<p>&lt;/script&gt;
+&lt;/doc:source&gt;
+&lt;/doc:example&gt;</p>
+<p># Implementing custom form controls (using <cite>ngModel</cite>)
+Angular implements all of the basic HTML form controls (<a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:input input}, {&#64;link api/ng.directive:select select}, {&#64;link api/ng.directive:textarea textarea}), which should be sufficient for most cases.
+However, if you need more flexibility, you can write your own form control as a directive.</p>
+<p>In order for custom control to work with <cite>ngModel</cite> and to achieve two-way data-binding it needs to:</p>
+<blockquote>
+<div><ul class="simple">
+<li>implement <cite>render</cite> method, which is responsible for rendering the data after it passed the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>   api/ng.directive:ngModel.NgModelController#$formatters NgModelController#$formatters},</li>
+<li>call <cite>$setViewValue</cite> method, whenever the user interacts with the control and model needs to be updated. This is usually done inside a DOM Event listener.</li>
+</ul>
+</div></blockquote>
+<p>See <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> guide/directive $compileProvider.directive} for more info.</p>
+<p>The following example shows how to add two-way data-binding to contentEditable elements.</p>
+<p>&lt;doc:example module=&#8221;form-example2&#8221;&gt;
+&lt;doc:source&gt;
+&lt;script&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>angular.module(&#8216;form-example2&#8217;, []).directive(&#8216;contenteditable&#8217;, function() {</dt>
+<dd><dl class="first docutils">
+<dt>return {</dt>
+<dd><p class="first">require: &#8216;ngModel&#8217;,
+link: function(scope, elm, attrs, ctrl) {</p>
+<blockquote>
+<div><p>// view -&gt; model
+elm.bind(&#8216;blur&#8217;, function() {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>scope.$apply(function() {</dt>
+<dd>ctrl.$setViewValue(elm.html());</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p>});</p>
+<p>// model -&gt; view
+ctrl.$render = function() {</p>
+<blockquote>
+<div>elm.html(ctrl.$viewValue);</div></blockquote>
+<p>};</p>
+<p>// load init value from DOM
+ctrl.$setViewValue(elm.html());</p>
+</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+<p class="last">};</p>
+</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p>&lt;/script&gt;</p>
+<p>&lt;div contentEditable=&#8221;true&#8221; ng-model=&#8221;content&#8221; title=&#8221;Click to edit&#8221;&gt;Some&lt;/div&gt;
+&lt;pre&gt;model = {{content}}&lt;/pre&gt;</p>
+<dl class="docutils">
+<dt>&lt;style type=&#8221;text/css&#8221;&gt;</dt>
+<dd><dl class="first docutils">
+<dt>div[contentEditable] {</dt>
+<dd>cursor: pointer;
+background-color: #D0D0D0;</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>&lt;/style&gt;
+&lt;/doc:source&gt;
+&lt;/doc:example&gt;</p>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/forms.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

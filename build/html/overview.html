@@ -1,0 +1,298 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Developer Guide: Overview
+&#64;description</p>
+<p># What Is Angular?</p>
+<p>AngularJS is a structural framework for dynamic web apps. It lets you use HTML as your template
+language and lets you extend HTML&#8217;s syntax to express your application&#8217;s components clearly and
+succinctly. Out of the box, it eliminates much of the code you currently write through data
+binding and dependency injection. And it all happens in JavaScript within the browser making it an
+ideal partner with any server technology.</p>
+<p>Angular is what HTML would have been had it been designed for applications. HTML is a great
+declarative language for static documents. It does not contain much in the way of creating
+applications, and as a result building web applications is an exercise in <em>what do I have to do, so
+that I trick the browser in to doing what I want.</em></p>
+<p>The impedance mismatch between dynamic applications and static documents is often solved as:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>library</strong> - a collection of functions which are useful when writing web apps. Your code is
+in charge and it calls into the library when it sees fit. E.g., <cite>jQuery</cite>.</li>
+<li><strong>frameworks</strong> - a particular implementation of a web application, where your code fills in
+the details. The framework is in charge and it calls into your code when it needs something
+app specific. E.g., <cite>knockout</cite>, <cite>sproutcore</cite>, etc.</li>
+</ul>
+</div></blockquote>
+<p>Angular takes another approach. It attempts to minimize the impedance mismatch between document
+centric HTML and what an application needs by creating new HTML constructs. Angular teaches the
+browser new syntax through a construct we call directives. Examples include:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Data binding as in <cite>{{}}</cite>.</li>
+<li>DOM control structures for repeating/hiding DOM fragments.</li>
+<li>Support for forms and form validation.</li>
+<li>Attaching code-behind to DOM elements.</li>
+<li>Grouping of HTML into reusable components.</li>
+</ul>
+</div></blockquote>
+<p>## End-to-end solution</p>
+<p>Angular tries to be an end-to-end solution, when building a web application. This means it is
+not a single piece in an overall puzzle of building a web application, but an end-to-end solution.
+This makes Angular opinionated about how a CRUD application should be built. But while it is
+opinionated, it also tries to make sure that its opinion is just a starting point, which you can
+easily change. Angular comes with the following out-of-the-box:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Everything you need to build a CRUD app in a cohesive set: data-binding, basic templating
+directives, form validation, routing, deep-linking, reusable components, dependency injection.</li>
+<li>Testability story: unit-testing, end-to-end testing, mocks, test harnesses.</li>
+<li>Seed application with directory layout and test scripts as a starting point.</li>
+</ul>
+</div></blockquote>
+<p>## Angular Sweet Spot</p>
+<p>Angular simplifies application development by presenting a higher level of abstraction to the
+developer. Like any abstraction, it comes at a cost of flexibility. In other words not every app
+is a good fit for Angular. Angular was built for the CRUD application in mind. Luckily CRUD
+applications represent at least 90% of the web applications. But to understand what Angular is
+good at one also has to understand when an app is not a good fit for Angular.</p>
+<p>Games, and GUI editors are examples of very intensive and tricky DOM manipulation. These kinds of
+apps are different from CRUD apps, and as a result are not a good fit for Angular. In these cases
+using something closer to bare metal such as <cite>jQuery</cite> may be a better fit.</p>
+<p># An Introductory Angular Example</p>
+<p>Below is a typical CRUD application which contains a form. The form values are validated, and
+are used to compute the total, which is formatted to a particular locale. These are some common
+concepts which the application developer may face:</p>
+<blockquote>
+<div><ul class="simple">
+<li>attaching data-model to the UI.</li>
+<li>writing, reading and validating user input.</li>
+<li>computing new values based on the model.</li>
+<li>formatting output in a user specific locale.</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>&lt;example&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;file name=&#8221;script.js&#8221;&gt;</dt>
+<dd><dl class="first docutils">
+<dt>function InvoiceCntl($scope) {</dt>
+<dd>$scope.qty = 1;
+$scope.cost = 19.95;</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>&lt;/file&gt;
+&lt;file name=&#8221;index.html&#8221;&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;div ng-controller=&#8221;InvoiceCntl&#8221;&gt;</dt>
+<dd><p class="first">&lt;b&gt;Invoice:&lt;/b&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;table&gt;</p>
+<blockquote>
+<div><p>&lt;tr&gt;&lt;td&gt;Quantity&lt;/td&gt;&lt;td&gt;Cost&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;</p>
+<blockquote>
+<div>&lt;td&gt;&lt;input type=&#8221;integer&#8221; min=&#8221;0&#8221; ng-model=&#8221;qty&#8221; required &gt;&lt;/td&gt;
+&lt;td&gt;&lt;input type=&#8221;number&#8221; ng-model=&#8221;cost&#8221; required &gt;&lt;/td&gt;</div></blockquote>
+<p>&lt;/tr&gt;</p>
+</div></blockquote>
+<p class="last">&lt;/table&gt;
+&lt;hr&gt;
+&lt;b&gt;Total:&lt;/b&gt; {{qty * cost | currency}}</p>
+</dd>
+</dl>
+<p>&lt;/div&gt;</p>
+</div></blockquote>
+<p>&lt;/file&gt;
+&lt;file name=&#8221;scenario.js&#8221;&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>it(&#8216;should show of angular binding&#8217;, function() {</dt>
+<dd>expect(binding(&#8216;qty * cost&#8217;)).toEqual(&#8216;$19.95&#8217;);
+input(&#8216;qty&#8217;).enter(&#8216;2&#8217;);
+input(&#8216;cost&#8217;).enter(&#8216;5.00&#8217;);
+expect(binding(&#8216;qty * cost&#8217;)).toEqual(&#8216;$10.00&#8217;);</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p class="last">&lt;/file&gt;</p>
+</dd>
+</dl>
+<p>&lt;/example&gt;</p>
+<p>Try out the Live Preview above, and then let&#8217;s walk through the example and describe what&#8217;s going
+on.</p>
+<p>In the <cite>&lt;html&gt;</cite> tag, we specify that it is an Angular
+application with the <cite>ng-app</cite> directive. The <cite>ng-app</cite> will cause Angular to <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+bootstrap auto initialize} your application.</p>
+<blockquote>
+<div>&lt;html ng-app&gt;</div></blockquote>
+<p>We load Angular using the  <cite>&lt;script&gt;</cite> tag:</p>
+<blockquote>
+<div>&lt;script src=&#8221;<a class="reference external" href="https://ajax.googleapis.com/ajax/libs/angularjs/">https://ajax.googleapis.com/ajax/libs/angularjs/</a>?.?.?/angular.min.js&#8221;&gt;&lt;/script&gt;</div></blockquote>
+<p>From the <cite>ng-model</cite> attribute of the <cite>&lt;input&gt;</cite> tags, Angular automatically sets up two-way data
+binding, and we also demonstrate some easy input validation:</p>
+<blockquote>
+<div>Quantity: &lt;input type=&#8221;integer&#8221; min=&#8221;0&#8221; ng-model=&#8221;qty&#8221; required &gt;
+Cost: &lt;input type=&#8221;number&#8221; ng-model=&#8221;cost&#8221; required &gt;</div></blockquote>
+<p>These input widgets look normal enough, but consider these points:</p>
+<blockquote>
+<div><ul class="simple">
+<li>When this page loaded, Angular bound the names of the input widgets (<cite>qty</cite> and <cite>cost</cite>) to
+variables of the same name. Think of those variables as the &#8220;Model&#8221; component of the
+Model-View-Controller design pattern.</li>
+<li>Note that the HTML widget <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.directive:input input}
+has special powers. The input invalidates itself by turning red when you enter invalid data or
+leave the the input fields blank. These new widget behaviors make it easier to implement field
+validation common in CRUD applications.</li>
+</ul>
+</div></blockquote>
+<p>And finally, the mysterious <cite>{{ double curly braces }}</cite>:</p>
+<blockquote>
+<div>Total: {{qty * cost | currency}}</div></blockquote>
+<p>This notation, <cite>{{ _expression_ }}</cite>, is Angular markup for data-binding. The expression itself can
+be a combination of both an expression and a <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> dev_guide.templates.filters filter}: <cite>{{
+expression | filter }}</cite>. Angular provides filters for formatting display data.</p>
+<p>In the example above, the expression in double-curly braces directs Angular to &#8220;bind the data we
+got from the input widgets to the display, multiply them together, and format the resulting number
+into output that looks like money.&#8221;</p>
+<p>Notice that we achieved this application behavior not by calling Angular methods, nor by
+implementing application specific behavior as a framework. We achieved the behavior because the
+browser behaved more in line with what is needed for a dynamic web application rather then what is
+needed for a static document. Angular has lowered the impedance mismatch to the point where no
+library/framework calls are needed.</p>
+<p># The Zen of Angular</p>
+<p>Angular is built around the belief that declarative code is better than imperative when it comes
+to building UIs and wiring software components together, while imperative code is excellent for
+expressing business logic.</p>
+<blockquote>
+<div><ul class="simple">
+<li>It is a very good idea to decouple DOM manipulation from app logic. This dramatically improves
+the testability of the code.</li>
+<li>It is a really, _really_ good idea to regard app testing as equal in importance to app
+writing. Testing difficulty is dramatically affected by the way the code is structured.</li>
+<li>It is an excellent idea to decouple the client side of an app from the server side. This
+allows development work to progress in parallel, and allows for reuse of both sides.</li>
+<li>It is very helpful indeed if the framework guides developers through the entire journey of
+building an app: from designing the UI, through writing the business logic, to testing.</li>
+<li>It is always good to make common tasks trivial and difficult tasks possible.</li>
+</ul>
+</div></blockquote>
+<p>Angular frees you from the following pain:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>Registering callbacks:</strong> Registering callbacks clutters your code, making it hard to see the
+forest for the trees. Removing common boilerplate code such as callbacks is a good thing. It
+vastly reduces the amount of JavaScript coding _you_ have to do, and it makes it easier to see
+what your application does.</li>
+<li><strong>Manipulating HTML DOM programmatically:</strong> Manipulating HTML DOM is a cornerstone of AJAX
+applications, but it&#8217;s cumbersome and error-prone. By declaratively describing how the UI
+should change as your application state changes, you are freed from low level DOM manipulation
+tasks. Most applications written with Angular never have to programmatically manipulate the
+DOM, although you can if you want to.</li>
+<li><strong>Marshaling data to and from the UI:</strong> CRUD operations make up the majority of AJAX
+applications. The flow of marshaling data from the server to an internal object to an HTML
+form, allowing users to modify the form, validating the form, displaying validation errors,
+returning to an internal model, and then back to the server, creates a lot of boilerplate
+code. Angular eliminates almost all of this boilerplate, leaving code that describes the
+overall flow of the application rather than all of the implementation details.</li>
+<li><strong>Writing tons of initialization code just to get started:</strong> Typically you need to write a lot
+of plumbing just to get a basic &#8220;Hello World&#8221; AJAX app working. With Angular you can bootstrap
+your app easily using services, which are auto-injected into your application in a <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+<a class="reference external" href="http://code.google.com/p/google-guice/">http://code.google.com/p/google-guice/</a> Guice}-like dependency-injection style. This allows you
+to get started developing features quickly. As a bonus, you get full control over the
+initialization process in automated tests.</li>
+</ul>
+</div></blockquote>
+<p># Watch a Presentation About Angular</p>
+<p>Here is a presentation on Angular from May 2012.</p>
+<p>&lt;iframe width=&#8221;560&#8221; height=&#8221;315&#8221; src=&#8221;<a class="reference external" href="http://www.youtube.com/embed/bfrn5VNpwsg">http://www.youtube.com/embed/bfrn5VNpwsg</a>&#8221; frameborder=&#8221;0&#8221; allowfullscreen&gt;&lt;/iframe&gt;</p>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/overview.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

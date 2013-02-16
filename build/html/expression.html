@@ -1,0 +1,295 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Developer Guide: Expressions
+&#64;description</p>
+<p>Expressions are JavaScript-like code snippets that are usually placed in bindings such as <cite>{{
+expression }}</cite>. Expressions are processed by <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$parse $parse}
+service.</p>
+<p>For example, these are all valid expressions in angular:</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>1+2</cite></li>
+<li><cite>3*10 | currency</cite></li>
+<li><cite>user.name</cite></li>
+</ul>
+</div></blockquote>
+<p>## Angular Expressions vs. JS Expressions</p>
+<p>It might be tempting to think of Angular view expressions as JavaScript expressions, but that is
+not entirely correct, since Angular does not use a JavaScript <cite>eval()</cite> to evaluate expressions.
+You can think of Angular expressions as JavaScript expressions with following differences:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>Attribute Evaluation:</strong> evaluation of all properties are against the scope, doing the
+evaluation, unlike in JavaScript where the expressions are evaluated against the global
+<cite>window</cite>.</li>
+<li><strong>Forgiving:</strong> expression evaluation is forgiving to undefined and null, unlike in JavaScript,
+where such evaluations generate <cite>NullPointerExceptions</cite>.</li>
+<li><strong>No Control Flow Statements:</strong> you cannot do any of the following in angular expression:
+conditionals, loops, or throw.</li>
+<li><strong>Filters:</strong> you can pass result of expression evaluations through filter chains. For example
+to convert date object into a local specific human-readable format.</li>
+</ul>
+</div></blockquote>
+<p>If, on the other hand, you do want to run arbitrary JavaScript code, you should make it a
+controller method and call the method. If you want to <cite>eval()</cite> an angular expression from
+JavaScript, use the <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$rootScope.Scope#$eval <cite>$eval()</cite>} method.</p>
+<p>## Example
+&lt;doc:example&gt;
+&lt;doc:source&gt;</p>
+<blockquote>
+<div>1+2={{1+2}}</div></blockquote>
+<p>&lt;/doc:source&gt;
+&lt;doc:scenario&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>it(&#8216;should calculate expression in binding&#8217;, function() {</dt>
+<dd>expect(binding(&#8216;1+2&#8217;)).toEqual(&#8216;3&#8217;);</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p>&lt;/doc:scenario&gt;
+&lt;/doc:example&gt;</p>
+<p>You can try evaluating different expressions here:</p>
+<p>&lt;doc:example&gt;
+&lt;doc:source&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;script&gt;</dt>
+<dd><dl class="first docutils">
+<dt>function Cntl2($scope) {</dt>
+<dd><p class="first">var exprs = $scope.exprs = [];
+$scope.expr = &#8216;3*10|currency&#8217;;
+$scope.addExp = function(expr) {</p>
+<blockquote>
+<div>exprs.push(expr);</div></blockquote>
+<p>};</p>
+<dl class="docutils">
+<dt>$scope.removeExp = function(index) {</dt>
+<dd>exprs.splice(index, 1);</dd>
+</dl>
+<p class="last">};</p>
+</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>&lt;/script&gt;
+&lt;div ng-controller=&#8221;Cntl2&#8221; class=&#8221;expressions&#8221;&gt;</p>
+<blockquote>
+<div><p>Expression:
+&lt;input type=&#8217;text&#8217; ng-model=&#8221;expr&#8221; size=&#8221;80&#8221;/&gt;
+&lt;button ng-click=&#8221;addExp(expr)&#8221;&gt;Evaluate&lt;/button&gt;
+&lt;ul&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;li ng-repeat=&#8221;expr in exprs&#8221;&gt;</dt>
+<dd><blockquote class="first">
+<div>[ &lt;a href=&#8221;&#8221; ng-click=&#8221;removeExp($index)&#8221;&gt;X&lt;/a&gt; ]
+&lt;tt&gt;{{expr}}&lt;/tt&gt; =&gt; &lt;span ng-bind=&#8221;$parent.$eval(expr)&#8221;&gt;&lt;/span&gt;</div></blockquote>
+<p class="last">&lt;/li&gt;</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>&lt;/ul&gt;</p>
+</div></blockquote>
+<p>&lt;/div&gt;</p>
+</div></blockquote>
+<p>&lt;/doc:source&gt;
+&lt;doc:scenario&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>it(&#8216;should allow user expression testing&#8217;, function() {</dt>
+<dd>element(&#8216;.expressions :button&#8217;).click();
+var li = using(&#8216;.expressions ul&#8217;).repeater(&#8216;li&#8217;);
+expect(li.count()).toBe(1);
+expect(li.row(0)).toEqual([&#8220;3*10|currency&#8221;, &#8220;$30.00&#8221;]);</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p>&lt;/doc:scenario&gt;
+&lt;/doc:example&gt;</p>
+<p># Property Evaluation</p>
+<p>Evaluation of all properties takes place against a scope. Unlike JavaScript, where names default
+to global window properties, Angular expressions have to use <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/ng.$window
+<cite>$window</cite>} to refer to the global <cite>window</cite> object. For example, if you want to call <cite>alert()</cite>, which is
+defined on <cite>window</cite>, in an expression you must use <cite>$window.alert()</cite>. This is done intentionally to
+prevent accidental access to the global state (a common source of subtle bugs).</p>
+<p>&lt;doc:example&gt;
+&lt;doc:source&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&lt;script&gt;</dt>
+<dd><dl class="first docutils">
+<dt>function Cntl1($window, $scope){</dt>
+<dd><p class="first">$scope.name = &#8216;World&#8217;;</p>
+<dl class="docutils">
+<dt>$scope.greet = function() {</dt>
+<dd>($window.mockWindow || $window).alert(&#8216;Hello &#8216; + $scope.name);</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>&lt;/script&gt;
+&lt;div class=&#8221;example2&#8221; ng-controller=&#8221;Cntl1&#8221;&gt;</p>
+<blockquote>
+<div>Name: &lt;input ng-model=&#8221;name&#8221; type=&#8221;text&#8221;/&gt;
+&lt;button ng-click=&#8221;greet()&#8221;&gt;Greet&lt;/button&gt;</div></blockquote>
+<p>&lt;/div&gt;</p>
+</div></blockquote>
+<p>&lt;/doc:source&gt;
+&lt;doc:scenario&gt;</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>it(&#8216;should calculate expression in binding&#8217;, function() {</dt>
+<dd><p class="first">var alertText;
+this.addFutureAction(&#8216;set mock&#8217;, function($window, $document, done) {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>$window.mockWindow = {</dt>
+<dd>alert: function(text){ alertText = text; }</dd>
+</dl>
+<p>};
+done();</p>
+</div></blockquote>
+<p>});
+element(&#8216;:button:contains(Greet)&#8217;).click();
+expect(this.addFuture(&#8216;alert text&#8217;, function(done) {</p>
+<blockquote>
+<div>done(null, alertText);</div></blockquote>
+<p class="last">})).toBe(&#8216;Hello World&#8217;);</p>
+</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p>&lt;/doc:scenario&gt;
+&lt;/doc:example&gt;</p>
+<p>## Forgiving</p>
+<p>Expression evaluation is forgiving to undefined and null. In JavaScript, evaluating <cite>a.b.c</cite> throws
+an exception if <cite>a</cite> is not an object. While this makes sense for a general purpose language, the
+expression evaluations are primarily used for data binding, which often look like this:</p>
+<blockquote>
+<div>{{a.b.c}}</div></blockquote>
+<p>It makes more sense to show nothing than to throw an exception if <cite>a</cite> is undefined (perhaps we are
+waiting for the server response, and it will become defined soon). If expression evaluation wasn&#8217;t
+forgiving we&#8217;d have to write bindings that clutter the code, for example: <cite>{{((a||{}).b||{}).c}}</cite></p>
+<p>Similarly, invoking a function <cite>a.b.c()</cite> on undefined or null simply returns undefined.</p>
+<p>## No Control Flow Statements</p>
+<p>You cannot write a control flow statement in an expression. The reason behind this is core to the
+Angular philosophy that application logic should be in controllers, not in the view. If you need a
+conditional, loop, or to throw from a view expression, delegate to a JavaScript method instead.</p>
+<p>## Filters</p>
+<p>When presenting data to the user, you might need to convert the data from its raw format to a
+user-friendly format. For example, you might have a data object that needs to be formatted
+according to the locale before displaying it to the user. You can pass expressions through a chain
+of filters like this:</p>
+<blockquote>
+<div>name | uppercase</div></blockquote>
+<p>The expression evaluator simply passes the value of name to <a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a>
+api/ng.filter:uppercase <cite>uppercase</cite>} filter.</p>
+<p>Chain filters using this syntax:</p>
+<blockquote>
+<div>value | filter1 | filter2</div></blockquote>
+<p>You can also pass colon-delimited arguments to filters, for example, to display the number 123
+with 2 decimal points:</p>
+<blockquote>
+<div>123 | number:2</div></blockquote>
+<p># The $</p>
+<p>You might be wondering, what is the significance of the $ prefix? It is simply a prefix that
+angular uses, to differentiate its API names from others. If angular didn&#8217;t use $, then evaluating
+<cite>a.length()</cite> would return undefined because neither a nor angular define such a property.</p>
+<p>Consider that in a future version of Angular we might choose to add a length method, in which case
+the behavior of the expression would change. Worse yet, you the developer could create a length
+property and then we would have a collision. This problem exists because Angular augments existing
+objects with additional behavior. By prefixing its additions with $ we are reserving our namespace
+so that angular developers and developers who use Angular can develop in harmony without collisions.</p>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/expression.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

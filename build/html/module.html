@@ -1,0 +1,398 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>&lt;no title&gt; &mdash; AngularJS_doc_jp 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AngularJS_doc_jp 1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>&#64;ngdoc overview
+&#64;name Developer Guide: Modules
+&#64;description</p>
+<p># What is a Module?</p>
+<p>Most applications have a main method which instantiates, wires, and bootstraps the application.
+Angular apps don&#8217;t have a main method. Instead modules declaratively specify how an application
+should be bootstrapped. There are several advantages to this approach:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The process is more declarative which is easier to understand</li>
+<li>In unit-testing there is no need to load all modules, which may aid in writing unit-tests.</li>
+<li>Additional modules can be loaded in scenario tests, which can override some of the
+configuration and help end-to-end test the application</li>
+<li>Third party code can be packaged as reusable modules.</li>
+<li>The modules can be loaded in any/parallel order (due to delayed nature of module execution).</li>
+</ul>
+</div></blockquote>
+<p># The Basics</p>
+<p>Ok, I&#8217;m in a hurry. How do I get a Hello World module working?</p>
+<p>Important things to notice:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="mailto:{&#37;&#52;&#48;link">{<span>&#64;</span>link</a> api/angular.Module Module} API</li>
+<li>Notice the reference to the <cite>myApp</cite> module in the <cite>&lt;html ng-app=&#8221;myApp&#8221;&gt;</cite>, it is what
+bootstraps the app using your module.</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>&lt;doc:example module=&#8217;myApp&#8217;&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;doc:source&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;script&gt;</dt>
+<dd><p class="first">// declare a module
+var myAppModule = angular.module(&#8216;myApp&#8217;, []);</p>
+<p>// configure the module.
+// in this example we will create a greeting filter
+myAppModule.filter(&#8216;greet&#8217;, function() {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>return function(name) {</dt>
+<dd><blockquote class="first">
+<div>return &#8216;Hello, &#8216; + name + &#8216;!&#8217;;</div></blockquote>
+<p class="last">};</p>
+</dd>
+</dl>
+</div></blockquote>
+<p class="last">});</p>
+</dd>
+</dl>
+<p>&lt;/script&gt;
+&lt;div&gt;</p>
+<blockquote>
+<div>{{ &#8216;World&#8217; | greet }}</div></blockquote>
+<p class="last">&lt;/div&gt;</p>
+</dd>
+</dl>
+<p class="last">&lt;/doc:source&gt;</p>
+</dd>
+</dl>
+<p>&lt;/doc:example&gt;</p>
+<p># Recommended Setup</p>
+<p>While the example above is simple, it will not scale to large applications. Instead we recommend
+that you break your application to multiple modules like this:</p>
+<blockquote>
+<div><ul class="simple">
+<li>A service module, for service declaration</li>
+<li>A directive module, for directive declaration</li>
+<li>A filter module, for filter declaration</li>
+<li>And an application level module which depends on the above modules, and which has
+initialization code.</li>
+</ul>
+</div></blockquote>
+<p>The reason for this breakup is that in your tests, it is often necessary to ignore the
+initialization code, which tends to be difficult to test. By putting it into a separate module it
+can be easily ignored in tests. The tests can also be more focused by only loading the modules
+that are relevant to tests.</p>
+<p>The above is only a suggestion, so feel free to tailor it to your needs.</p>
+<dl class="docutils">
+<dt>&lt;doc:example module=&#8217;xmpl&#8217;&gt;</dt>
+<dd><blockquote class="first">
+<div><dl class="docutils">
+<dt>&lt;doc:source&gt;</dt>
+<dd><dl class="first docutils">
+<dt>&lt;script&gt;</dt>
+<dd><dl class="first docutils">
+<dt>angular.module(&#8216;xmpl.service&#8217;, []).</dt>
+<dd><dl class="first docutils">
+<dt>value(&#8216;greeter&#8217;, {</dt>
+<dd><p class="first">salutation: &#8216;Hello&#8217;,
+localize: function(localization) {</p>
+<blockquote>
+<div>this.salutation = localization.salutation;</div></blockquote>
+<p>},
+greet: function(name) {</p>
+<blockquote>
+<div>return this.salutation + &#8216; &#8216; + name + &#8216;!&#8217;;</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>}).
+value(&#8216;user&#8217;, {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>load: function(name) {</dt>
+<dd>this.name = name;</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p class="last">});</p>
+</dd>
+</dl>
+<p>angular.module(&#8216;xmpl.directive&#8217;, []);</p>
+<p>angular.module(&#8216;xmpl.filter&#8217;, []);</p>
+<dl class="docutils">
+<dt>angular.module(&#8216;xmpl&#8217;, [&#8216;xmpl.service&#8217;, &#8216;xmpl.directive&#8217;, &#8216;xmpl.filter&#8217;]).</dt>
+<dd><dl class="first docutils">
+<dt>run(function(greeter, user) {</dt>
+<dd><p class="first">// This is effectively part of the main method initialization code
+greeter.localize({</p>
+<blockquote>
+<div>salutation: &#8216;Bonjour&#8217;</div></blockquote>
+<p class="last">});
+user.load(&#8216;World&#8217;);</p>
+</dd>
+</dl>
+<p class="last">})</p>
+</dd>
+</dl>
+<p>// A Controller for your app
+var XmplController = function($scope, greeter, user) {</p>
+<blockquote>
+<div>$scope.greeting = greeter.greet(user.name);</div></blockquote>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>&lt;/script&gt;
+&lt;div ng-controller=&#8221;XmplController&#8221;&gt;</p>
+<blockquote>
+<div>{{ greeting }}!</div></blockquote>
+<p class="last">&lt;/div&gt;</p>
+</dd>
+</dl>
+<p>&lt;/doc:source&gt;</p>
+</div></blockquote>
+<p class="last">&lt;/doc:example&gt;</p>
+</dd>
+</dl>
+<p># Module Loading &amp; Dependencies</p>
+<p>A module is a collection of configuration and run blocks which get applied to the application
+during the bootstrap process. In its simplest form the module consist of collection of two kinds
+of blocks:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><strong>Configuration blocks</strong> - get executed during the provider registrations and configuration</li>
+</ol>
+<blockquote>
+<div>phase. Only providers and constants can be injected into configuration blocks. This is to
+prevent accidental instantiation of services before they have been fully configured.</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><strong>Run blocks</strong> - get executed after the injector is created and are used to kickstart the</li>
+</ol>
+<blockquote>
+<div>application. Only instances and constants can be injected into run blocks. This is to prevent
+further system configuration during application run time.</div></blockquote>
+</div></blockquote>
+<p>&lt;pre&gt;
+angular.module(&#8216;myModule&#8217;, []).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>config(function(injectables) { // provider-injector</dt>
+<dd>// This is an example of config block.
+// You can have as many of these as you want.
+// You can only inject Providers (not instances)
+// into the config blocks.</dd>
+</dl>
+<p>}).
+run(function(injectables) { // instance-injector</p>
+<blockquote>
+<div>// This is an example of a run block.
+// You can have as many of these as you want.
+// You can only inject instances (not Providers)
+// into the run blocks</div></blockquote>
+<p>});</p>
+</div></blockquote>
+<p>&lt;/pre&gt;</p>
+<p>## Configuration Blocks</p>
+<p>There are some convenience methods on the module which are equivalent to the config block. For
+example:</p>
+<p>&lt;pre&gt;
+angular.module(&#8216;myModule&#8217;, []).</p>
+<blockquote>
+<div>value(&#8216;a&#8217;, 123).
+factory(&#8216;a&#8217;, function() { return 123; }).
+directive(&#8216;directiveName&#8217;, ...).
+filter(&#8216;filterName&#8217;, ...);</div></blockquote>
+<p>// is same as</p>
+<dl class="docutils">
+<dt>angular.module(&#8216;myModule&#8217;, []).</dt>
+<dd><dl class="first docutils">
+<dt>config(function($provide, $compileProvider, $filterProvider) {</dt>
+<dd>$provide.value(&#8216;a&#8217;, 123);
+$provide.factory(&#8216;a&#8217;, function() { return 123; });
+$compileProvider.directive(&#8216;directiveName&#8217;, ...);
+$filterProvider.register(&#8216;filterName&#8217;, ...);</dd>
+</dl>
+<p class="last">});</p>
+</dd>
+</dl>
+<p>&lt;/pre&gt;</p>
+<p>The configuration blocks get applied in the order in which they are registered. The only exception
+to it are constant definitions, which are placed at the beginning of all configuration blocks.</p>
+<p>## Run Blocks</p>
+<p>Run blocks are the closest thing in Angular to the main method. A run block is the code which
+needs to run to kickstart the application. It is executed after all of the service have been
+configured and the injector has been created. Run blocks typically contain code which is hard
+to unit-test, and for this reason should be declared in isolated modules, so that they can be
+ignored in the unit-tests.</p>
+<p>## Dependencies</p>
+<p>Modules can list other modules as their dependencies. Depending on a module implies that required
+module needs to be loaded before the requiring module is loaded. In other words the configuration
+blocks of the required modules execute before the configuration blocks or the requiring module.
+The same is true for the run blocks. Each module can only be loaded once, even if multiple other
+modules require it.</p>
+<p>## Asynchronous Loading</p>
+<p>Modules are a way of managing $injector configuration, and have nothing to do with loading of
+scripts into a VM. There are existing projects which deal with script loading, which may be used
+with Angular. Because modules do nothing at load time they can be loaded into the VM in any order
+and thus script loaders can take advantage of this property and parallelize the loading process.</p>
+<p># Unit Testing</p>
+<p>In its simplest form a unit test is a way of instantiating a subset of the application in test and
+then applying a stimulus to it. It is important to realize that each module can only be loaded
+once per injector. Typically an app has only one injector. But in tests, each test has its own
+injector, which means that the modules are loaded multiple times per VM. Properly structured
+modules can help with unit testing, as in this example:</p>
+<p>In all of these examples we are going to assume this module definition:
+&lt;pre&gt;</p>
+<blockquote>
+<div><p>angular.module(&#8216;greetMod&#8217;, []).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>factory(&#8216;alert&#8217;, function($window) {</dt>
+<dd><dl class="first docutils">
+<dt>return function(text) {</dt>
+<dd>$window.alert(text);</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>}).</p>
+<p>value(&#8216;salutation&#8217;, &#8216;Hello&#8217;).</p>
+<dl class="docutils">
+<dt>factory(&#8216;greet&#8217;, function(alert, salutation) {</dt>
+<dd><dl class="first docutils">
+<dt>return function(name) {</dt>
+<dd>alert(salutation + &#8216; &#8216; + name + &#8216;!&#8217;);</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+</div></blockquote>
+<p>&lt;/pre&gt;</p>
+<p>Let&#8217;s write some tests:
+&lt;pre&gt;
+describe(&#8216;myApp&#8217;, function() {</p>
+<blockquote>
+<div><p>// load the relevant application modules then load a special
+// test module which overrides the $window with a mock version,
+// so that calling window.alert() will not block the test
+// runner with a real alert box. This is an example of overriding
+// configuration information in tests.
+beforeEach(module(&#8216;greetMod&#8217;, function($provide) {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>$provide.value(&#8216;$window&#8217;, {</dt>
+<dd>alert: jasmine.createSpy(&#8216;alert&#8217;)</dd>
+</dl>
+<p>});</p>
+</div></blockquote>
+<p>}));</p>
+<p>// The inject() will create the injector and inject the greet and
+// $window into the tests. The test need not concern itself with
+// wiring of the application, only with testing it.
+it(&#8216;should alert on $window&#8217;, inject(function(greet, $window) {</p>
+<blockquote>
+<div>greet(&#8216;World&#8217;);
+expect($window.alert).toHaveBeenCalledWith(&#8216;Hello World!&#8217;);</div></blockquote>
+<p>}));</p>
+<p>// this is another way of overriding configuration in the
+// tests using an inline module and inject methods.
+it(&#8216;should alert using the alert service&#8217;, function() {</p>
+<blockquote>
+<div><p>var alertSpy = jasmine.createSpy(&#8216;alert&#8217;);
+module(function($provide) {</p>
+<blockquote>
+<div>$provide.value(&#8216;alert&#8217;, alertSpy);</div></blockquote>
+<p>});
+inject(function(greet) {</p>
+<blockquote>
+<div>greet(&#8216;World&#8217;);
+expect(alertSpy).toHaveBeenCalledWith(&#8216;Hello World!&#8217;);</div></blockquote>
+<p>});</p>
+</div></blockquote>
+<p>});</p>
+</div></blockquote>
+<p>});
+&lt;/pre&gt;</p>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/module.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">AngularJS_doc_jp 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, a2c.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
